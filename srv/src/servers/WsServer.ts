@@ -1,8 +1,8 @@
 import expressWs from 'express-ws';
 import { v4 as uuid } from 'uuid';
 import * as WebSocket from 'ws';
-import { WsPlayer } from '../WsPlayer';
-import { Actions, ClientMessage, Errors, Events, ServerMessage } from '../Messages';
+import { WsPlayer } from './WsPlayer';
+import { Actions, ClientMessage, Errors, Events, ServerMessage, EnterGameMessage, CloseGameMessage } from '../Messages';
 import { Server } from './Server';
 import { CLOSE_EMPTY_GAME_TIMEOUT, HEARTBEAT_TIMEOUT, HEARTBEAT_INTERVAL } from '../config';
 
@@ -26,7 +26,7 @@ export class WsServer {
     // register internal operations
     this.on(Actions.CREATE_GAME, this.onCreateGame.bind(this));
     this.on(Actions.ENTER_GAME, this.onEnterGame.bind(this));
-    this.on(Actions.DISCONNECT, this.onClientDisconnect.bind(this));
+    this.on(Actions.DISCONNECT, this.onDisconnect.bind(this));
 
     // check heartbeat
     const heartbeatInterval = setInterval(this.checkHeartbeat.bind(this), HEARTBEAT_INTERVAL);
@@ -88,7 +88,7 @@ export class WsServer {
     return { ws, msg, player };
   }
 
-  private onEnterGame(ws: WebSocket, msg: ClientMessage): HandlerFnReturn {
+  private onEnterGame(ws: WebSocket, msg: EnterGameMessage): HandlerFnReturn {
     const privatePlayerId = uuid();
     const publicPlayerId = uuid();
     const gameId = msg.gameId;
@@ -108,13 +108,12 @@ export class WsServer {
     return { ws, msg, player };
   }
 
-  private onClientDisconnect(_ws: WebSocket, msg: ClientMessage) {
-    const player = this.players.get(msg.privatePlayerId);
-    this.players.delete(msg.privatePlayerId);
-    const gamePlayers = this.games.get(msg.gameId);
+  private onDisconnect(_ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+    this.players.delete(player.privatePlayerId);
+    const gamePlayers = this.games.get(player.gameId);
     gamePlayers.delete(player);
     if (gamePlayers.size === 0) {
-      this.closeEmptyGameWithTimeout(msg.gameId);
+      this.closeEmptyGameWithTimeout(player.gameId);
     }
   }
 
@@ -130,7 +129,7 @@ export class WsServer {
         this.triggerAction(null, {
           type: Actions.CLOSE_GAME,
           gameId
-        });
+        } as CloseGameMessage);
       }
     }, CLOSE_EMPTY_GAME_TIMEOUT);
   }
@@ -158,7 +157,7 @@ export class WsServer {
       this.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
         msg: Errors.UNHANDLED_EVENT
-      })
+      });
     }
   }
 
@@ -181,7 +180,7 @@ export class WsServer {
    * @param ws WebSocket representing the Client
    * @param msg Message
    */
-  public sendMessage(ws: WebSocket, msg: ServerMessage): void {
+  public sendMessage<T extends ServerMessage>(ws: WebSocket, msg: T): void {
     ws.send(JSON.stringify(msg));
   }
 

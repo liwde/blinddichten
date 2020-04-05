@@ -1,11 +1,12 @@
 import * as WebSocket from 'ws';
 import { PersistenceApi } from '../persistence/API';
 import { WsServer } from '../servers/WsServer';
-import { ClientMessage, Actions, Events } from '../Messages';
-import { WsPlayer } from '../WsPlayer';
+import { ClientMessage, Actions, Events, LobbyUpdatedMessage, Errors, CloseGameMessage } from '../Messages';
+import { WsPlayer } from '../servers/WsPlayer';
+import { GamePhaseHandler, GamePhases } from './GamePhases';
 
 export class Lobby {
-  constructor(private wsServer: WsServer, private persistenceApi: PersistenceApi) {
+  constructor(private wsServer: WsServer, private persistenceApi: PersistenceApi, private gamePhaseHandler: GamePhaseHandler) {
     this.wsServer.on(Actions.CREATE_GAME, this.onCreateGame.bind(this));
     this.wsServer.on(Actions.ENTER_GAME, this.onEnterGame.bind(this));
     this.wsServer.on(Actions.CHANGE_LOBBY, this.onChangeLobby.bind(this));
@@ -39,10 +40,17 @@ export class Lobby {
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
       lobby
-    });
+    } as LobbyUpdatedMessage);
   }
 
   private onEnterGame(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+      this.wsServer.sendMessage(ws, {
+        type: Events.ERROR_OCCURRED,
+        msg: Errors.WRONG_GAME_PHASE
+      });
+      return;
+    }
     // TODO create player
     // TODO get game + check: game in Lobby Phase --> abort if not
     // TODO add player to game
@@ -66,11 +74,17 @@ export class Lobby {
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
       lobby
-    });
+    } as LobbyUpdatedMessage);
   }
 
   private onChangeLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
-    // TODO checkGamePhase: Lobby
+    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+      this.wsServer.sendMessage(ws, {
+        type: Events.ERROR_OCCURRED,
+        msg: Errors.WRONG_GAME_PHASE
+      });
+      return;
+    }
     // TODO if necessary: update player
     // TODO if necessary and player is owner: update settings
     // TODO get updated lobbyObject
@@ -86,11 +100,17 @@ export class Lobby {
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
       lobby
-    });
+    } as LobbyUpdatedMessage);
   }
 
   private onReadyLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
-    // TODO checkGamePhase: Lobby
+    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+      this.wsServer.sendMessage(ws, {
+        type: Events.ERROR_OCCURRED,
+        msg: Errors.WRONG_GAME_PHASE
+      });
+      return;
+    }
     // TODO update player
     // TODO get lobbyObject
     const lobby = {
@@ -105,11 +125,25 @@ export class Lobby {
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
       lobby
+    } as LobbyUpdatedMessage);
+
+    // TODO: Check: Everybody ready?
+
+    this.wsServer.broadcastMessage(player.gameId, {
+      type: Events.LOBBY_COMPLETED
     });
+
+    // TODO: somehow trigger next screen.
   }
 
   private onUnreadyLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
-    // TODO checkGamePhase: Lobby
+    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+      this.wsServer.sendMessage(ws, {
+        type: Events.ERROR_OCCURRED,
+        msg: Errors.WRONG_GAME_PHASE
+      });
+      return;
+    }
     // TODO update player
     // TODO get lobbyObject
     const lobby = {
@@ -124,11 +158,13 @@ export class Lobby {
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
       lobby
-    });
+    } as LobbyUpdatedMessage);
   }
 
-  private onDisconnect(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
-    // TODO checkGamePhase: Lobby
+  private onDisconnect(_ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+      return; // generic event, no message sent
+    }
     // TODO remove player immediately
     // TODO get lobbyObject
     const lobby = {
@@ -141,11 +177,13 @@ export class Lobby {
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
       lobby
-    });
+    } as LobbyUpdatedMessage);
   }
 
-  private onCloseGame(ws: WebSocket, msg: ClientMessage) {
-    // TODO checkGamePhase: Lobby
+  private onCloseGame(_ws: WebSocket, msg: CloseGameMessage) {
+    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, msg.gameId)) {
+      return; // generic event, no message sent
+    }
     // TODO remove game immediately
     // no one left to notify
   }

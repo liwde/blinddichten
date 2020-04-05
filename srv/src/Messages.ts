@@ -40,15 +40,40 @@ export enum Actions {
 export enum Errors {
   UNKNOWN_ERROR = 'unknownError',
   UNHANDLED_EVENT = 'unhandledEvent',
-  GAME_NOT_FOUND = 'gameNotFound'
+  GAME_NOT_FOUND = 'gameNotFound',
+  WRONG_GAME_PHASE = 'wrongGamePhase'
 }
+
 
 export interface ClientMessage {
   type: Actions;
-  [prop: string]: any;
+  privateClientId?: string;
 }
+
+export interface EnterGameMessage extends ClientMessage {
+  gameId: string;
+}
+
+export interface CloseGameMessage extends ClientMessage {
+  gameId: string;
+}
+
 
 export interface ServerMessage {
   type: Events;
-  [prop: string]: any;
+}
+
+export interface ErrorMessage extends ServerMessage {
+  msg: Errors;
+  payload?: any;
+}
+
+export interface GameEnteredMessage extends ServerMessage {
+  publicPlayerId: string;
+  privatePlayerId: string;
+  gameId: string;
+}
+
+export interface LobbyUpdatedMessage extends ServerMessage {
+  lobby: any; // TODO
 }
