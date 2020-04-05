@@ -17,6 +17,6 @@ const gamePhaseHandler = new GamePhaseHandler(persistenceApi);
 
 const lobby = new Lobby(wsServer, persistenceApi, gamePhaseHandler);
 const writing = new Writing(wsServer, persistenceApi, gamePhaseHandler);
-const viewing = new Viewing(wsServer, persistenceApi);
+const viewing = new Viewing(wsServer, persistenceApi, gamePhaseHandler);
 
 server.start();
