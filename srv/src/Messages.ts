@@ -45,8 +45,7 @@ export enum Errors {
 
 export interface ClientMessage {
   type: Actions;
-  privatePlayerId: string | null;
-  gameId: string | null;
+  [prop: string]: any;
 }
 
 export interface ServerMessage {

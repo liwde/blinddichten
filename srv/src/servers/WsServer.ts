@@ -38,6 +38,7 @@ export class WsServer {
    * @param ws Websocket of the incoming Connection
    */
   private onConnect(ws: WebSocket): void {
+    let player: WsPlayer;
     ws.on('message', (data: string) => {
       try {
         const msg = JSON.parse(data);
@@ -45,18 +46,30 @@ export class WsServer {
         if (msg.type in [Actions.DISCONNECT, Actions.CLOSE_GAME]) {
           return;
         }
-        // update player heartbeat
+        // update local player object (necessary for reconnect)
         if (msg.playerId && this.players.get(msg.playerId)) {
-          this.players.get(msg.playerId).lastSeen = new Date();
+          player = this.players.get(msg.playerId);
+        }
+        // update player heartbeat
+        if (player) {
+          player.lastSeen = new Date();
         }
         // trigger action
-        this.triggerActionForMessage(ws, msg);
+        this.triggerAction(ws, msg, player);
       } catch (error) {
         this.sendMessage(ws, {
           type: Events.ERROR_OCCURRED,
           msg: Errors.UNKNOWN_ERROR,
           payload: error.toString()
         });
+      }
+    });
+
+    ws.on('close', () => {
+      if (player) {
+        this.triggerAction(ws, {
+          type: Actions.DISCONNECT
+        }, player);
       }
     });
   }
@@ -114,9 +127,8 @@ export class WsServer {
       const gamePlayers = this.games.get(gameId);
       if (!gamePlayers || gamePlayers.size === 0) {
         this.games.delete(gameId);
-        this.triggerActionForMessage(null, {
+        this.triggerAction(null, {
           type: Actions.CLOSE_GAME,
-          privatePlayerId: null,
           gameId
         });
       }
@@ -132,9 +144,8 @@ export class WsServer {
     });
   }
 
-  private triggerActionForMessage(ws: WebSocket, msg: ClientMessage) {
+  private triggerAction(ws: WebSocket, msg: ClientMessage, player?: WsPlayer) {
     const handlerList = this.handlers.get(msg.type);
-    const player = this.players.get(msg.privatePlayerId);
     if (handlerList) {
       // call handler chain, skipping if necessary, passing modified results if necessary
       handlerList.reduce((previousHandlerResult: HandlerFnReturn, handler) => {
