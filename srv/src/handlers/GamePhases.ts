@@ -24,7 +24,8 @@ export class GamePhaseHandler {
     }
   }
 
-  public on(phase: GamePhases, handler: handlerFn) {
+  // TODO unclear if really needed...
+  public onSwitchTo(phase: GamePhases, handler: handlerFn) {
     let handlerList = this.handlers.get(phase);
     if (!handlerList) {
       handlerList = [];

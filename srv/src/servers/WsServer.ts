@@ -201,4 +201,8 @@ export class WsServer {
       }
     });
   }
+
+  public getPlayers(gameId: string): Set<WsPlayer> {
+    return this.games.get(gameId);
+  }
 }

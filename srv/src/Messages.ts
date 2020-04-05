@@ -58,6 +58,11 @@ export interface CloseGameMessage extends ClientMessage {
   gameId: string;
 }
 
+export interface ReadyWritingMessage extends ClientMessage {
+  verse1: string; // is title on first chunk
+  verse2?: string; // is empty on last chunk
+}
+
 
 export interface ServerMessage {
   type: Events;
@@ -76,4 +81,17 @@ export interface GameEnteredMessage extends ServerMessage {
 
 export interface LobbyUpdatedMessage extends ServerMessage {
   lobby: any; // TODO
+}
+
+export interface WritingUpdatedMessage extends ServerMessage {
+  players: any; // TODO
+}
+
+export interface WritingNextMessage extends ServerMessage {
+  title: string;
+  lastVerse: string;
+}
+
+export interface WritingCompletedMessage extends ServerMessage {
+  poems: any; // TODO
 }

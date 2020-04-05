@@ -29,6 +29,7 @@ export class Lobby {
         rounds: 2
       }
     };
+    // END TODO
 
     this.wsServer.sendMessage(ws, {
       type: Events.GAME_ENTERED,
@@ -52,7 +53,6 @@ export class Lobby {
       return;
     }
     // TODO create player
-    // TODO get game + check: game in Lobby Phase --> abort if not
     // TODO add player to game
     // TODO get lobbyObject
     const lobby = {
@@ -63,6 +63,7 @@ export class Lobby {
         rounds: 2
       }
     };
+    // END TODO
 
     this.wsServer.sendMessage(ws, {
       type: Events.GAME_ENTERED,
@@ -96,6 +97,7 @@ export class Lobby {
         rounds: 3
       }
     };
+    // END TODO
 
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
@@ -121,19 +123,18 @@ export class Lobby {
         rounds: 3
       }
     };
+    // END TODO
 
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
       lobby
     } as LobbyUpdatedMessage);
 
-    // TODO: Check: Everybody ready?
-
-    this.wsServer.broadcastMessage(player.gameId, {
-      type: Events.LOBBY_COMPLETED
-    });
-
-    // TODO: somehow trigger next screen.
+    if (lobby.players.every(p => p.ready)) {
+      this.wsServer.broadcastMessage(player.gameId, {
+        type: Events.LOBBY_COMPLETED
+      });
+    }
   }
 
   private onUnreadyLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
@@ -154,6 +155,7 @@ export class Lobby {
         rounds: 3
       }
     };
+    // END TODO
 
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
@@ -173,6 +175,7 @@ export class Lobby {
         rounds: 3
       }
     };
+    // END TODO
 
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
@@ -184,7 +187,7 @@ export class Lobby {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, msg.gameId)) {
       return; // generic event, no message sent
     }
-    // TODO remove game immediately
+    // TODO remove game from db immediately
     // no one left to notify
   }
 }
