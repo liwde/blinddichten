@@ -6,7 +6,9 @@ import { Actions, ClientMessage, Errors, Events, ServerMessage } from '../Messag
 import { Server } from './Server';
 import { CLOSE_EMPTY_GAME_TIMEOUT, HEARTBEAT_TIMEOUT, HEARTBEAT_INTERVAL } from '../config';
 
-type handlerFn = (ws: WebSocket, msg: ClientMessage, player?: WsPlayer) => void;
+// note: handler function can return modified { ws, msg, player? } for handlers registered later or skip them with { skip: true }
+type HandlerFnReturn = { ws: WebSocket, msg: ClientMessage, player?: WsPlayer, skip?: boolean } | { skip: true } | null | undefined;
+type handlerFn = (ws: WebSocket, msg: ClientMessage, player?: WsPlayer) => HandlerFnReturn;
 
 export class WsServer {
   private expressWs: expressWs.Instance;
@@ -59,26 +61,23 @@ export class WsServer {
     });
   }
 
-  private onCreateGame(ws: WebSocket): void {
+  private onCreateGame(ws: WebSocket, msg: ClientMessage): HandlerFnReturn {
     const gameId = uuid();
-    const playerId = uuid();
+    const privatePlayerId = uuid();
+    const publicPlayerId = uuid();
 
-    const player = new WsPlayer(playerId, gameId, ws);
-    this.players.set(playerId, player);
+    const player = new WsPlayer(privatePlayerId, publicPlayerId, gameId, ws);
+    this.players.set(privatePlayerId, player);
     const gamePlayers = new Set<WsPlayer>();
     gamePlayers.add(player);
     this.games.set(gameId, gamePlayers);
 
-    // TODO: actually create game --> Lobby registers on create game as well!
-    // TODO: sendMessage will later be sent by Lobby screen that handles game creation
-    this.sendMessage(ws, {
-      type: Events.GAME_ENTERED,
-      playerId, gameId
-    });
+    return { ws, msg, player };
   }
 
-  private onEnterGame(ws: WebSocket, msg: ClientMessage): void {
-    const playerId = uuid();
+  private onEnterGame(ws: WebSocket, msg: ClientMessage): HandlerFnReturn {
+    const privatePlayerId = uuid();
+    const publicPlayerId = uuid();
     const gameId = msg.gameId;
 
     if (!msg.gameId || !this.games.get(msg.gameId)) {
@@ -86,24 +85,19 @@ export class WsServer {
         type: Events.ERROR_OCCURRED,
         msg: Errors.GAME_NOT_FOUND
       });
-      return;
+      return { skip: true };
     }
 
-    const player = new WsPlayer(playerId, gameId, ws);
-    this.players.set(playerId, player);
+    const player = new WsPlayer(privatePlayerId, publicPlayerId, gameId, ws);
+    this.players.set(privatePlayerId, player);
     this.games.get(msg.gameId).add(player);
 
-    // TODO: actually enter game (and check if it exists at all) --> Lobby registers on create game as well!
-    // TODO: sendMessage will later be sent by Lobby screen that handles game creation
-    this.sendMessage(ws, {
-      type: Events.GAME_ENTERED,
-      playerId, gameId
-    });
+    return { ws, msg, player };
   }
 
   private onClientDisconnect(_ws: WebSocket, msg: ClientMessage) {
-    const player = this.players.get(msg.playerId);
-    this.players.delete(msg.playerId);
+    const player = this.players.get(msg.privatePlayerId);
+    this.players.delete(msg.privatePlayerId);
     const gamePlayers = this.games.get(msg.gameId);
     gamePlayers.delete(player);
     if (gamePlayers.size === 0) {
@@ -122,7 +116,7 @@ export class WsServer {
         this.games.delete(gameId);
         this.triggerActionForMessage(null, {
           type: Actions.CLOSE_GAME,
-          playerId: null,
+          privatePlayerId: null,
           gameId
         });
       }
@@ -133,16 +127,27 @@ export class WsServer {
     const now = new Date().getTime();
     this.players.forEach(player => {
       if (now - player.lastSeen.getTime() > HEARTBEAT_TIMEOUT) {
-        this.players.delete(player.playerId);
+        this.players.delete(player.privatePlayerId);
       }
     });
   }
 
   private triggerActionForMessage(ws: WebSocket, msg: ClientMessage) {
     const handlerList = this.handlers.get(msg.type);
-    const player = this.players.get(msg.playerId);
+    const player = this.players.get(msg.privatePlayerId);
     if (handlerList) {
-      handlerList.forEach(handler => handler(ws, msg, player));
+      // call handler chain, skipping if necessary, passing modified results if necessary
+      handlerList.reduce((previousHandlerResult: HandlerFnReturn, handler) => {
+        if (previousHandlerResult.skip === true) {
+          return previousHandlerResult;
+        }
+        return handler(previousHandlerResult.ws, previousHandlerResult.msg, previousHandlerResult.player) || previousHandlerResult;
+      }, { ws, msg, player });
+    } else {
+      this.sendMessage(ws, {
+        type: Events.ERROR_OCCURRED,
+        msg: Errors.UNHANDLED_EVENT
+      })
     }
   }
 
@@ -175,13 +180,13 @@ export class WsServer {
    * @param msg Message
    * @param excludePlayerId Optionally exclude a playerId from receiving the message
    */
-  public broadcastMessage(gameId: string, msg: ServerMessage, excludePlayerId?: string) {
+  public broadcastMessage(gameId: string, msg: ServerMessage, excludePrivatePlayerId?: string) {
     const gamePlayers = this.games.get(gameId);
     if (!gamePlayers) {
       throw new Error('gameId not found');
     }
     gamePlayers.forEach(gamePlayer => {
-      if (!excludePlayerId || excludePlayerId !== gamePlayer.playerId) {
+      if (!excludePrivatePlayerId || excludePrivatePlayerId !== gamePlayer.privatePlayerId) {
         this.sendMessage(gamePlayer.ws, msg);
       }
     });

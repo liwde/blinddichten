@@ -39,12 +39,13 @@ export enum Actions {
 
 export enum Errors {
   UNKNOWN_ERROR = 'unknownError',
+  UNHANDLED_EVENT = 'unhandledEvent',
   GAME_NOT_FOUND = 'gameNotFound'
 }
 
 export interface ClientMessage {
   type: Actions;
-  playerId: string | null;
+  privatePlayerId: string | null;
   gameId: string | null;
 }
 
