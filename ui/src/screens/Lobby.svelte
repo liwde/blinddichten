@@ -43,7 +43,7 @@
     <h2>Spieler</h2>
     <ol>
       {#each players as player}
-        <li class:ready="{player.ready}" class:me="{player.publicPlayerId === publicPlayerId}">
+        <li class:ready="{player.ready}" class:me="{player.publicPlayerId === publicPlayerId}" class:owner="{player.isOwner}">
           {#if player.publicPlayerId === publicPlayerId && !player.ready}
             <input type="text" value="{player.name}" on:keyup="{editNameDebounced}" on:change="{editName}" />
           {:else}
@@ -66,5 +66,8 @@
   }
   li.me.ready {
     background-color: #eee;
+  }
+  li.owner::after {
+    content: " 👑"
   }
 </style>
