@@ -1,29 +1,52 @@
 <script>
-  export let name;
+  export let wsHandler;
+
+  import Home from './screens/Home.svelte';
+  import { onDestroy } from 'svelte';
+
+  let gameId, privatePlayerId, publicPlayerId;
+  let waitingForGameCreation = false;
+
+  function createGame() {
+    waitingForGameCreation = true;
+    wsHandler.sendMessage({ type: 'createGame' });
+  }
+
+  wsHandler.on.gameEntered = function gameEntered(msg) {
+    gameId = msg.gameId;
+    privatePlayerId = msg.privatePlayerId;
+    publicPlayerId = msg.publicPlayerId;
+    if (waitingForGameCreation) {
+      location.hash = gameId;
+    }
+    waitingForGameCreation = false;
+  };
+
+  onDestroy(() => wsHandler.close());
+
+  $: {
+    if (location.hash && gameId !== location.hash.substr(1)) {
+      gameId = location.hash.substr(1);
+      wsHandler.sendMessage({ type: 'enterGame', gameId });
+    }
+  }
 </script>
 
-<main>
-  <h1>Hello {name}!</h1>
-  <p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
+<app>
+  {#if !gameId}
+    <Home on:createGame="{createGame}" bind:createDisabled="{waitingForGameCreation}" />
+  {/if}
+</app>
 
 <style>
-  main {
-    text-align: center;
+  app {
     padding: 1em;
     max-width: 240px;
     margin: 0 auto;
   }
 
-  h1 {
-    color: #ff3e00;
-    text-transform: uppercase;
-    font-size: 4em;
-    font-weight: 100;
-  }
-
   @media (min-width: 640px) {
-    main {
+    app {
       max-width: none;
     }
   }
