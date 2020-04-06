@@ -9,10 +9,15 @@ export default class WebSocketHandler {
     if (this.socket) {
       this.socket.close();
     }
+
+    let socketReady;
+    this.socketReady = new Promise(resolve => socketReady = resolve);
+
     this.socket = new WebSocket(this.serverUri);
 
     this.socket.addEventListener('open', event => {
-      this.heartbeatIntervalHandle = setInterval(() => this.heartbeat(), 10 * 1000);
+      socketReady();
+      this.heartbeatIntervalHandle = setInterval(() => this.heartbeat(), 2 * 1000);
     });
 
     this.socket.addEventListener('close', () => {
@@ -28,7 +33,8 @@ export default class WebSocketHandler {
     });
   }
 
-  sendMessage(msg) {
+  async sendMessage(msg) {
+    await this.socketReady;
     this.socket.send(JSON.stringify(msg));
   }
 
@@ -36,7 +42,8 @@ export default class WebSocketHandler {
     this.sendMessage({ type: 'sendHeartbeat' });
   }
 
-  close() {
+  async close() {
+    await socketReady
     clearInterval(this.heartbeatIntervalHandle);
     this.socket.close();
   }
