@@ -6,29 +6,46 @@
 
   let players = [];
   let rounds;
+  let owner;
   let ready = false;
 
   wsHandler.on.lobbyUpdated = function(msg) {
     players = msg.lobby.players;
     rounds = msg.lobby.settings.rounds;
     ready = players.find(p => p.publicPlayerId === publicPlayerId).ready;
+    owner = players.find(p => p.publicPlayerId === publicPlayerId).isOwner;
   }
 
-  const editName = debounce(function editName(event) {
+  function editName(event) {
     wsHandler.sendMessage({
       type: 'changeLobby',
       name: event.target.value
     });
-  }, 1000);
+  }
+  const editNameDebounced = debounce(editName, 1000);
+
+  function editRounds(event) {
+    wsHandler.sendMessage({
+      type: 'changeLobby',
+      settings: { rounds: event.target.value }
+    });
+  }
+  const editRoundsDebounced = debounce(editRounds, 1000);
 </script>
 
 <main>
+  <h1>Lobby</h1>
+  <settings>
+    <h2>Einstellungen</h2>
+    Rundenzahl: <input disabled="{!owner}" type="number" value="{rounds}" on:keyup="{editRoundsDebounced}" on:change="{editRounds}" />
+  </settings>
   <players>
+    <h2>Spieler</h2>
     <ol>
       {#each players as player}
         <li class:ready="{player.ready}" class:me="{player.publicPlayerId === publicPlayerId}">
           {#if player.publicPlayerId === publicPlayerId && !player.ready}
-            <input type="text" value="{player.name}" on:keyup="{editName}">
+            <input type="text" value="{player.name}" on:keyup="{editNameDebounced}" on:change="{editName}" />
           {:else}
             {player.name}
           {/if}

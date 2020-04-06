@@ -30,6 +30,7 @@
     // For now, we just always reset and go home
     gameId = null;
     location.hash = '';
+    alert(msg.msg);
     //}
   };
 

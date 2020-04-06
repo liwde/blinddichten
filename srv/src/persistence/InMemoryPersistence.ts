@@ -4,7 +4,6 @@ import { DEFAULT_NUM_ROUNDS, DEFAULT_PLAYER_NAME } from "../config";
 import { GamePhases } from "../handlers/GamePhases";
 import { Player } from "./entities/Player";
 import { WsPlayer } from "../servers/WsPlayer";
-import { stringify } from "querystring";
 
 export class InMemoryPersistence implements PersistenceApi {
   private games: Map<string, Game> = new Map();
@@ -40,7 +39,7 @@ export class InMemoryPersistence implements PersistenceApi {
     return game;
   }
 
-  public async addPlayer(wsPlayer: WsPlayer) {
+  public async addPlayer(wsPlayer: WsPlayer, isOwner: boolean = false) {
     if (this.players.get(wsPlayer.privatePlayerId)) {
       throw new Error('Player already exists');
     }
@@ -52,6 +51,7 @@ export class InMemoryPersistence implements PersistenceApi {
       privatePlayerId: wsPlayer.privatePlayerId,
       publicPlayerId: wsPlayer.publicPlayerId,
       name: DEFAULT_PLAYER_NAME,
+      isOwner,
       ready: false
     };
     this.players.set(wsPlayer.privatePlayerId, player);

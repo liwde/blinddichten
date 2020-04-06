@@ -23,8 +23,8 @@ export class Lobby {
   }
 
   private async getPlayersForLobby(gameId: string) {
-    return (await this.persistenceApi.getPlayersByGame(gameId)).map(({ publicPlayerId, name, ready }) => {
-      return { publicPlayerId, name, ready };
+    return (await this.persistenceApi.getPlayersByGame(gameId)).map(({ publicPlayerId, name, isOwner, ready }) => {
+      return { publicPlayerId, name, isOwner, ready };
     });
   }
 
@@ -53,7 +53,7 @@ export class Lobby {
   @synchronizePerGameId
   private async onCreateGame(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     await this.persistenceApi.createGame(player);
-    await this.persistenceApi.addPlayer(player);
+    await this.persistenceApi.addPlayer(player, true);
 
     const geMsg: GameEnteredMessage = {
       type: Events.GAME_ENTERED,

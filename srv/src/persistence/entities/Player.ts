@@ -3,5 +3,6 @@ export interface Player {
   privatePlayerId: string;
   gameId: string;
   name: string;
+  isOwner: boolean;
   ready: boolean;
 }
