@@ -34,9 +34,7 @@
     //}
   };
 
-  onDestroy(() => wsHandler.close());
-
-  $: {
+  function hashChanged() {
     if (location.hash && location.hash.length > 1 && gameId !== location.hash.substr(1)) {
       gameId = location.hash.substr(1);
       const existingGame = window.localStorage.getItem('game_' + gameId);
@@ -46,6 +44,12 @@
       wsHandler.sendMessage({ type: 'enterGame', gameId });
     }
   }
+
+  window.onhashchange = hashChanged
+
+  onDestroy(() => wsHandler.close());
+
+  hashChanged();
 </script>
 
 <app>
