@@ -42,7 +42,7 @@ export class Lobby {
     };
     this.wsServer.broadcastMessage(gameId, luMsg);
 
-    if (lobby.players.every(p => p.ready)) {
+    if (lobby.players.length > 0 && lobby.players.every(p => p.ready)) {
       await this.gamePhaseHandler.switchToPhase(GamePhases.WRITING, gameId);
       this.wsServer.broadcastMessage(gameId, {
         type: Events.LOBBY_COMPLETED
