@@ -61,6 +61,9 @@
 </main>
 
 <style>
+  li.ready {
+    background-color: lightgreen;
+  }
   li.me.ready {
     background-color: #eee;
   }
