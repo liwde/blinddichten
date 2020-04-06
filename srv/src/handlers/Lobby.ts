@@ -43,7 +43,7 @@ export class Lobby {
     this.wsServer.broadcastMessage(gameId, luMsg);
 
     if (lobby.players.every(p => p.ready)) {
-      await this.persistenceApi.updatePlayersReady(gameId, false); // unready all players for next phase
+      await this.gamePhaseHandler.switchToPhase(GamePhases.WRITING, gameId);
       this.wsServer.broadcastMessage(gameId, {
         type: Events.LOBBY_COMPLETED
       });
@@ -68,7 +68,7 @@ export class Lobby {
 
   @synchronizePerGameId
   private async onEnterGame(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
-    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+    if (!await this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
         msg: Errors.WRONG_GAME_PHASE
@@ -90,7 +90,7 @@ export class Lobby {
 
   @synchronizePerGameId
   private async onChangeLobby(ws: WebSocket, msg: ChangeLobbyMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
-    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+    if (!await this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
         msg: Errors.WRONG_GAME_PHASE
@@ -110,7 +110,7 @@ export class Lobby {
 
   @synchronizePerGameId
   private async onReadyLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
-    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+    if (!await this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
         msg: Errors.WRONG_GAME_PHASE
@@ -124,7 +124,7 @@ export class Lobby {
 
   @synchronizePerGameId
   private async onUnreadyLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
-    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+    if (!await this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
         msg: Errors.WRONG_GAME_PHASE
@@ -138,7 +138,7 @@ export class Lobby {
 
   @synchronizePerGameId
   private async onDisconnect(_ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
-    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+    if (!await this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       return; // generic event, no message sent
     }
     await this.persistenceApi.removePlayer(player.privatePlayerId);
@@ -147,7 +147,7 @@ export class Lobby {
 
   @synchronizePerGameId
   private async onCloseGame(_ws: WebSocket, msg: CloseGameMessage): PromisedWsHandlerFnReturn {
-    if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, msg.gameId)) {
+    if (!await this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, msg.gameId)) {
       return; // generic event, no message sent
     }
     await this.persistenceApi.deleteGame(msg.gameId);

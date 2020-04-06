@@ -96,4 +96,12 @@ export class InMemoryPersistence implements PersistenceApi {
     }
     game.rounds = rounds;
   }
+
+  public async updateGamePhase(gameId: string, phase: GamePhases) {
+    const game = this.games.get(gameId);
+    if (!game) {
+      throw new Error('Game doesn\'t exist');
+    }
+    game.currentPhase = phase;
+  }
 }

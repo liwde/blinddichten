@@ -1,6 +1,7 @@
 import { Game } from "./entities/Game";
 import { Player } from "./entities/Player";
 import { WsPlayer } from "../servers/WsPlayer";
+import { GamePhases } from "../handlers/GamePhases";
 
 export interface PersistenceApi {
   createGame(player: WsPlayer): Promise<void>;
@@ -14,4 +15,5 @@ export interface PersistenceApi {
   updatePlayerReady(privatePlayerId: string, ready: boolean): Promise<void>;
   updatePlayersReady(gameId: string, ready: boolean): Promise<void>;
   updateGameRounds(gameId: string, rounds: number): Promise<void>;
+  updateGamePhase(gameId: string, phase: GamePhases): Promise<void>;
 }

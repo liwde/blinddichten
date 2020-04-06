@@ -11,13 +11,13 @@ export class GamePhaseHandler {
 
   constructor(private persistenceApi: PersistenceApi) {}
 
-  public isInPhase(phase: GamePhases, gameId: string): boolean {
-    // TODO: check with persistence
-    return true;
+  public async isInPhase(phase: GamePhases, gameId: string): Promise<boolean> {
+    return (await this.persistenceApi.getGame(gameId)).currentPhase === phase;
   }
 
-  public switchToPhase(phase: GamePhases, gameId: string): void {
-    // TODO: set at persistence
+  public async switchToPhase(phase: GamePhases, gameId: string): Promise<void> {
+    await this.persistenceApi.updateGamePhase(gameId, phase);
+    await this.persistenceApi.updatePlayersReady(gameId, false); // unready all players for next phase
     const handlerList = this.handlers.get(phase);
     if (handlerList) {
       handlerList.forEach(handler => handler(gameId));
