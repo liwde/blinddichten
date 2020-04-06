@@ -1,6 +1,7 @@
 <script>
   export let wsHandler;
 
+  import Game from './Game.svelte';
   import Home from './screens/Home.svelte';
   import { onDestroy } from 'svelte';
 
@@ -16,10 +17,17 @@
     gameId = msg.gameId;
     privatePlayerId = msg.privatePlayerId;
     publicPlayerId = msg.publicPlayerId;
+    window.localStorage.setItem('game_' + gameId, JSON.stringify({ publicPlayerId, privatePlayerId }));
     if (waitingForGameCreation) {
       location.hash = gameId;
     }
     waitingForGameCreation = false;
+  };
+
+  wsHandler.on.errorOccurred = function errorOccurred(msg) {
+    if (msg.msg === 'gameNotFound') {
+      gameId = null;
+    }
   };
 
   onDestroy(() => wsHandler.close());
@@ -27,13 +35,19 @@
   $: {
     if (location.hash && gameId !== location.hash.substr(1)) {
       gameId = location.hash.substr(1);
+      const existingGame = window.localStorage.getItem('game_' + gameId);
+      if (existingGame) {
+        // TODO: Recover state instead of entering again
+      }
       wsHandler.sendMessage({ type: 'enterGame', gameId });
     }
   }
 </script>
 
 <app>
-  {#if !gameId}
+  {#if gameId}
+    <Game bind:wsHandler="{wsHandler}" />
+  {:else}
     <Home on:createGame="{createGame}" bind:createDisabled="{waitingForGameCreation}" />
   {/if}
 </app>
