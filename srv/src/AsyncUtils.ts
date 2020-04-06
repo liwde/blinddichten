@@ -30,9 +30,14 @@ export function synchronize(on: (...args: any[]) => string) {
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: any[]) {
+      const queueName = on(args);
+      if (queueName) {
         return executeQueued(on(args), () => originalMethod.apply(this, args));
+      } else {
+        return originalMethod.apply(this, args);
+      }
     }
   }
 }
 
-export const synchronizePerGameId = synchronize((_ws, _msg, player: WsPlayer) => player.gameId);
+export const synchronizePerGameId = synchronize((_ws, _msg, player: WsPlayer) => player?.gameId);

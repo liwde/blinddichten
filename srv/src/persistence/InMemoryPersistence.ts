@@ -7,8 +7,8 @@ import { WsPlayer } from "../servers/WsPlayer";
 import { stringify } from "querystring";
 
 export class InMemoryPersistence implements PersistenceApi {
-  private games: Map<string, Game>;
-  private players: Map<string, Player>;
+  private games: Map<string, Game> = new Map();
+  private players: Map<string, Player> = new Map();
 
   public async createGame(wsPlayer: WsPlayer) {
     if (this.games.get(wsPlayer.gameId)) {
