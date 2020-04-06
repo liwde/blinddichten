@@ -25,15 +25,18 @@
   };
 
   wsHandler.on.errorOccurred = function errorOccurred(msg) {
-    if (msg.msg === 'gameNotFound') {
-      gameId = null;
-    }
+    //if (msg.msg === 'gameNotFound') {
+    // TODO: We need to find a way when errors can be recovered by refreshing the state -- and then do this.
+    // For now, we just always reset and go home
+    gameId = null;
+    location.hash = '';
+    //}
   };
 
   onDestroy(() => wsHandler.close());
 
   $: {
-    if (location.hash && gameId !== location.hash.substr(1)) {
+    if (location.hash && location.hash.length > 1 && gameId !== location.hash.substr(1)) {
       gameId = location.hash.substr(1);
       const existingGame = window.localStorage.getItem('game_' + gameId);
       if (existingGame) {
@@ -46,7 +49,7 @@
 
 <app>
   {#if gameId}
-    <Game bind:wsHandler="{wsHandler}" />
+    <Game bind:wsHandler="{wsHandler}" bind:publicPlayerId="{publicPlayerId}" />
   {:else}
     <Home on:createGame="{createGame}" bind:createDisabled="{waitingForGameCreation}" />
   {/if}
