@@ -81,6 +81,14 @@ export class InMemoryPersistence implements PersistenceApi {
     player.ready = ready;
   }
 
+  public async updatePlayersReady(gameId: string, ready: boolean) {
+    this.players.forEach(player => {
+      if (player.gameId === gameId) {
+        player.ready = ready;
+      }
+    });
+  }
+
   public async updateGameRounds(gameId: string, rounds: number) {
     const game = this.games.get(gameId);
     if (!game) {

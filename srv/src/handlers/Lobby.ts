@@ -162,6 +162,7 @@ export class Lobby {
     } as LobbyUpdatedMessage);
 
     if (lobby.players.every(p => p.ready)) {
+      await this.persistenceApi.updatePlayersReady(player.gameId, false); // unready all players for next phase
       this.wsServer.broadcastMessage(player.gameId, {
         type: Events.LOBBY_COMPLETED
       });
