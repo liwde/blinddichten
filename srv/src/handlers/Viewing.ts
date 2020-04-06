@@ -1,16 +1,19 @@
 import * as WebSocket from 'ws';
-import { WsServer } from '../servers/WsServer';
+import { WsServer, PromisedWsHandlerFnReturn } from '../servers/WsServer';
 import { PersistenceApi } from '../persistence/API';
 import { GamePhaseHandler, GamePhases } from './GamePhases';
 import { ClientMessage, Actions, Events, Errors, LobbyUpdatedMessage } from '../Messages';
 import { WsPlayer } from '../servers/WsPlayer';
+import { synchronizePerGameId } from '../AsyncUtils';
 
 export class Viewing {
   constructor(private wsServer: WsServer, private persistenceApi: PersistenceApi, private gamePhaseHandler: GamePhaseHandler) {
-    this.wsServer.on(Actions.START_NEXT_GAME, this.onStartNextGame.bind(this));
+    // This feature is far from ready and even has low prio
+    // this.wsServer.on(Actions.START_NEXT_GAME, this.onStartNextGame.bind(this));
   }
 
-  private onStartNextGame(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+  @synchronizePerGameId
+  private async onStartNextGame(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.VIEWING, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,

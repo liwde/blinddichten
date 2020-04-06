@@ -1,7 +1,7 @@
 import { PersistenceApi } from "../persistence/API";
 
 export enum GamePhases {
-  LOBBY, WRITING, VIEWING
+  LOBBY = 'LOBBY', WRITING = 'WRITING', VIEWING = 'VIEWING'
 }
 
 type handlerFn = (gameId: string) => void;

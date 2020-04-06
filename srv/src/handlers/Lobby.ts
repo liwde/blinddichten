@@ -1,9 +1,10 @@
 import * as WebSocket from 'ws';
 import { PersistenceApi } from '../persistence/API';
-import { WsServer } from '../servers/WsServer';
+import { WsServer, WsHandlerFnReturn, PromisedWsHandlerFnReturn } from '../servers/WsServer';
 import { ClientMessage, Actions, Events, LobbyUpdatedMessage, Errors, CloseGameMessage } from '../Messages';
 import { WsPlayer } from '../servers/WsPlayer';
 import { GamePhaseHandler, GamePhases } from './GamePhases';
+import { synchronizePerGameId } from '../AsyncUtils';
 
 export class Lobby {
   constructor(private wsServer: WsServer, private persistenceApi: PersistenceApi, private gamePhaseHandler: GamePhaseHandler) {
@@ -16,7 +17,8 @@ export class Lobby {
     this.wsServer.on(Actions.CLOSE_GAME, this.onCloseGame.bind(this));
   }
 
-  private onCreateGame(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+  @synchronizePerGameId
+  private async onCreateGame(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     // TODO create player
     // TODO create game
     // TODO add player to game
@@ -44,7 +46,8 @@ export class Lobby {
     } as LobbyUpdatedMessage);
   }
 
-  private onEnterGame(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+  @synchronizePerGameId
+  private onEnterGame(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
@@ -78,7 +81,8 @@ export class Lobby {
     } as LobbyUpdatedMessage);
   }
 
-  private onChangeLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+  @synchronizePerGameId
+  private onChangeLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
@@ -105,7 +109,8 @@ export class Lobby {
     } as LobbyUpdatedMessage);
   }
 
-  private onReadyLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+  @synchronizePerGameId
+  private onReadyLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
@@ -137,7 +142,8 @@ export class Lobby {
     }
   }
 
-  private onUnreadyLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+  @synchronizePerGameId
+  private onUnreadyLobby(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
@@ -163,7 +169,8 @@ export class Lobby {
     } as LobbyUpdatedMessage);
   }
 
-  private onDisconnect(_ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+  @synchronizePerGameId
+  private onDisconnect(_ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       return; // generic event, no message sent
     }
@@ -183,7 +190,8 @@ export class Lobby {
     } as LobbyUpdatedMessage);
   }
 
-  private onCloseGame(_ws: WebSocket, msg: CloseGameMessage) {
+  @synchronizePerGameId
+  private onCloseGame(_ws: WebSocket, msg: CloseGameMessage): PromisedWsHandlerFnReturn {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, msg.gameId)) {
       return; // generic event, no message sent
     }

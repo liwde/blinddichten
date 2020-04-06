@@ -7,8 +7,17 @@ import { Server } from './Server';
 import { CLOSE_EMPTY_GAME_TIMEOUT, HEARTBEAT_TIMEOUT, HEARTBEAT_INTERVAL } from '../config';
 
 // note: handler function can return modified { ws, msg, player? } for handlers registered later or skip them with { skip: true }
-type HandlerFnReturn = { ws: WebSocket, msg: ClientMessage, player?: WsPlayer, skip?: boolean } | { skip: true } | null | undefined;
-type handlerFn = (ws: WebSocket, msg: ClientMessage, player?: WsPlayer) => HandlerFnReturn;
+export type UnpromisedWsHandlerFnReturn = { ws: WebSocket, msg: ClientMessage, player?: WsPlayer, skip?: boolean } | { skip: true } | null | undefined;
+export type PromisedWsHandlerFnReturn = Promise<UnpromisedWsHandlerFnReturn | void>;
+export type WsHandlerFnReturn = UnpromisedWsHandlerFnReturn | PromisedWsHandlerFnReturn | void;
+export type wsHandlerFn = (ws: WebSocket, msg: ClientMessage, player?: WsPlayer) => WsHandlerFnReturn;
+
+function setWsPlayer(ws: WebSocket, player: WsPlayer): void {
+  (ws as any).player = player;
+}
+function getWsPlayer(ws: WebSocket): WsPlayer | null {
+  return (ws as any).player as WsPlayer;
+}
 
 export class WsServer {
   private expressWs: expressWs.Instance;
@@ -16,7 +25,7 @@ export class WsServer {
 
   private games: Map<string, Set<WsPlayer>> = new Map();
   private players: Map<string, WsPlayer> = new Map();
-  private handlers: Map<Actions, handlerFn[]> = new Map();
+  private handlers: Map<Actions, wsHandlerFn[]> = new Map();
 
   constructor(private server: Server) {
     this.app = this.server.app as expressWs.Application;
@@ -38,7 +47,6 @@ export class WsServer {
    * @param ws Websocket of the incoming Connection
    */
   private onConnect(ws: WebSocket): void {
-    let player: WsPlayer;
     ws.on('message', (data: string) => {
       try {
         const msg = JSON.parse(data);
@@ -48,14 +56,14 @@ export class WsServer {
         }
         // update local player object (necessary for reconnect)
         if (msg.playerId && this.players.get(msg.playerId)) {
-          player = this.players.get(msg.playerId);
+          setWsPlayer(ws, this.players.get(msg.playerId));
         }
         // update player heartbeat
-        if (player) {
-          player.lastSeen = new Date();
+        if (getWsPlayer(ws)) {
+          getWsPlayer(ws).lastSeen = new Date();
         }
         // trigger action
-        this.triggerAction(ws, msg, player);
+        this.triggerAction(ws, msg, getWsPlayer(ws));
       } catch (error) {
         this.sendMessage(ws, {
           type: Events.ERROR_OCCURRED,
@@ -66,15 +74,15 @@ export class WsServer {
     });
 
     ws.on('close', () => {
-      if (player) {
+      if (getWsPlayer(ws)) {
         this.triggerAction(ws, {
           type: Actions.DISCONNECT
-        }, player);
+        }, getWsPlayer(ws));
       }
     });
   }
 
-  private onCreateGame(ws: WebSocket, msg: ClientMessage): HandlerFnReturn {
+  private onCreateGame(ws: WebSocket, msg: ClientMessage): UnpromisedWsHandlerFnReturn {
     const gameId = uuid();
     const privatePlayerId = uuid();
     const publicPlayerId = uuid();
@@ -84,11 +92,12 @@ export class WsServer {
     const gamePlayers = new Set<WsPlayer>();
     gamePlayers.add(player);
     this.games.set(gameId, gamePlayers);
+    setWsPlayer(ws, player);
 
     return { ws, msg, player };
   }
 
-  private onEnterGame(ws: WebSocket, msg: EnterGameMessage): HandlerFnReturn {
+  private onEnterGame(ws: WebSocket, msg: EnterGameMessage): UnpromisedWsHandlerFnReturn {
     const privatePlayerId = uuid();
     const publicPlayerId = uuid();
     const gameId = msg.gameId;
@@ -104,11 +113,12 @@ export class WsServer {
     const player = new WsPlayer(privatePlayerId, publicPlayerId, gameId, ws);
     this.players.set(privatePlayerId, player);
     this.games.get(msg.gameId).add(player);
+    setWsPlayer(ws, player);
 
     return { ws, msg, player };
   }
 
-  private onDisconnect(_ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+  private onDisconnect(_ws: WebSocket, msg: ClientMessage, player: WsPlayer): void {
     this.players.delete(player.privatePlayerId);
     const gamePlayers = this.games.get(player.gameId);
     gamePlayers.delete(player);
@@ -147,12 +157,13 @@ export class WsServer {
     const handlerList = this.handlers.get(msg.type);
     if (handlerList) {
       // call handler chain, skipping if necessary, passing modified results if necessary
-      handlerList.reduce((previousHandlerResult: HandlerFnReturn, handler) => {
-        if (previousHandlerResult.skip === true) {
+      handlerList.reduce(async (previousHandlerResult: Promise<UnpromisedWsHandlerFnReturn>, handler: wsHandlerFn) => {
+        const res = await previousHandlerResult;
+        if (res.skip === true) {
           return previousHandlerResult;
         }
-        return handler(previousHandlerResult.ws, previousHandlerResult.msg, previousHandlerResult.player) || previousHandlerResult;
-      }, { ws, msg, player });
+        return handler(res.ws, res.msg, res.player) || previousHandlerResult;
+      }, Promise.resolve({ ws, msg, player }));
     } else {
       this.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
@@ -166,7 +177,7 @@ export class WsServer {
    * @param action Action sent by the Client
    * @param handler Handler called on given Action
    */
-  public on(action: Actions, handler: handlerFn): void {
+  public on(action: Actions, handler: wsHandlerFn): void {
     let handlerList = this.handlers.get(action);
     if (!handlerList) {
       handlerList = [];

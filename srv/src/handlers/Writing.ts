@@ -1,9 +1,10 @@
 import * as WebSocket from 'ws';
-import { WsServer } from '../servers/WsServer';
+import { WsServer, PromisedWsHandlerFnReturn } from '../servers/WsServer';
 import { PersistenceApi } from '../persistence/API';
 import { GamePhaseHandler, GamePhases } from './GamePhases';
 import { ClientMessage, Actions, Events, Errors, ReadyWritingMessage, WritingUpdatedMessage, WritingCompletedMessage } from '../Messages';
 import { WsPlayer } from '../servers/WsPlayer';
+import { synchronizePerGameId } from '../AsyncUtils';
 
 export class Writing {
   constructor(private wsServer: WsServer, private persistenceApi: PersistenceApi, private gamePhaseHandler: GamePhaseHandler) {
@@ -11,7 +12,8 @@ export class Writing {
     this.wsServer.on(Actions.UNREADY_WRITING, this.onUnreadyWriting.bind(this));
   }
 
-  private onReadyWriting(ws: WebSocket, msg: ReadyWritingMessage, player: WsPlayer) {
+  @synchronizePerGameId
+  private async onReadyWriting(ws: WebSocket, msg: ReadyWritingMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
@@ -32,7 +34,7 @@ export class Writing {
       players
     } as WritingUpdatedMessage);
 
-    // TODO: Check: Everybody ready? Or even last round finished?
+    // TODO: Check: Everybody ready?
     if (players.every(p => p.ready)) {
       // TODO: Check: Last round finished
       if (false) {
@@ -69,7 +71,8 @@ export class Writing {
     }
   }
 
-  private onUnreadyWriting(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+  @synchronizePerGameId
+  private async onUnreadyWriting(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
