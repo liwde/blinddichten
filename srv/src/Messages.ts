@@ -55,6 +55,11 @@ export interface EnterGameMessage extends ClientMessage {
   gameId: string;
 }
 
+export interface ChangeLobbyMessage extends ClientMessage {
+  name?: string;
+  settings?: any; // TODO
+}
+
 export interface CloseGameMessage extends ClientMessage {
   gameId: string;
 }
