@@ -2,7 +2,7 @@ import expressWs from 'express-ws';
 import { v4 as uuid } from 'uuid';
 import * as WebSocket from 'ws';
 import { WsPlayer } from './WsPlayer';
-import { Actions, ClientMessage, Errors, Events, ServerMessage, EnterGameMessage, CloseGameMessage } from '../Messages';
+import { Actions, ClientMessage, Errors, Events, ServerMessage, EnterGameMessage, CloseGameMessage, RecoverSessionMessage } from '../Messages';
 import { Server } from './Server';
 import { CLOSE_EMPTY_GAME_TIMEOUT, HEARTBEAT_TIMEOUT, HEARTBEAT_INTERVAL } from '../config';
 
@@ -36,6 +36,7 @@ export class WsServer {
     this.on(Actions.CREATE_GAME, this.onCreateGame.bind(this));
     this.on(Actions.ENTER_GAME, this.onEnterGame.bind(this));
     this.on(Actions.DISCONNECT, this.onDisconnect.bind(this));
+    this.on(Actions.RECOVER_SESSION, this.onRecoverSession.bind(this));
     this.on(Actions.SEND_HEARTBEAT, () => {});
 
     // check heartbeat
@@ -103,7 +104,7 @@ export class WsServer {
     const publicPlayerId = uuid();
     const gameId = msg.gameId;
 
-    if (!msg.gameId || !this.games.get(msg.gameId)) {
+    if (!gameId || !this.games.get(gameId)) {
       this.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
         msg: Errors.GAME_NOT_FOUND
@@ -113,7 +114,7 @@ export class WsServer {
 
     const player = new WsPlayer(privatePlayerId, publicPlayerId, gameId, ws);
     this.players.set(privatePlayerId, player);
-    this.games.get(msg.gameId).add(player);
+    this.games.get(gameId).add(player);
     setWsPlayer(ws, player);
 
     return { ws, msg, player };
@@ -126,6 +127,27 @@ export class WsServer {
     if (gamePlayers.size === 0) {
       this.closeEmptyGameWithTimeout(player.gameId);
     }
+  }
+
+  private onRecoverSession(ws: WebSocket, msg: RecoverSessionMessage): UnpromisedWsHandlerFnReturn {
+    const privatePlayerId = msg.privatePlayerId;
+    const publicPlayerId = msg.publicPlayerId;
+    const gameId = msg.gameId;
+
+    if (!gameId || !this.games.get(gameId)) {
+      this.sendMessage(ws, {
+        type: Events.ERROR_OCCURRED,
+        msg: Errors.GAME_NOT_FOUND
+      });
+      return { skip: true };
+    }
+
+    const player = new WsPlayer(privatePlayerId, publicPlayerId, gameId, ws);
+    this.players.set(privatePlayerId, player);
+    this.games.get(gameId).add(player);
+    setWsPlayer(ws, player);
+
+    return { ws, msg, player };
   }
 
   /**

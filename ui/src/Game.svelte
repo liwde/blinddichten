@@ -7,9 +7,29 @@
   import Lobby from './screens/Lobby.svelte';
   import Writing from './screens/Writing.svelte';
   import Viewing from './screens/Viewing.svelte';
+  import { onDestroy } from 'svelte';
 
-  wsHandler.on('lobbyCompleted', function(msg) {
+  function sessionRecovered(msg) {
+    gamePhase = msg.currentPhase;
+
+    if (gamePhase === 'lobby') {
+      wsHandler.sendMessage({ type: 'enterGame', gameId });
+    } else if(!msg.playerInGame) {
+      gameId = null;
+      location.hash = '';
+    }
+  }
+  wsHandler.on('sessionRecovered', sessionRecovered);
+
+  function lobbyCompleted(msg) {
     gamePhase = 'writing';
+  }
+  wsHandler.on('lobbyCompleted', lobbyCompleted);
+
+
+  onDestroy(() => {
+    wsHandler.off('lobbyCompleted', lobbyCompleted);
+    wsHandler.off('sessionRecovered', sessionRecovered);
   });
 
   let gamePhase = 'lobby';

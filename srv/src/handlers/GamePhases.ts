@@ -1,7 +1,11 @@
+import * as WebSocket from 'ws';
+import { Actions, ClientMessage, SessionRecoveredMessage, Events } from "../Messages";
 import { PersistenceApi } from "../persistence/API";
+import { WsPlayer } from "../servers/WsPlayer";
+import { WsServer } from "../servers/WsServer";
 
 export enum GamePhases {
-  LOBBY = 'LOBBY', WRITING = 'WRITING', VIEWING = 'VIEWING'
+  LOBBY = 'lobby', WRITING = 'writing', VIEWING = 'viewing'
 }
 
 type handlerFn = (gameId: string) => void;
@@ -9,7 +13,25 @@ type handlerFn = (gameId: string) => void;
 export class GamePhaseHandler {
   private handlers: Map<GamePhases, handlerFn[]> = new Map();
 
-  constructor(private persistenceApi: PersistenceApi) {}
+  constructor(private wsServer: WsServer, private persistenceApi: PersistenceApi) {
+    this.wsServer.on(Actions.RECOVER_SESSION, this.onRecoverSession.bind(this));
+  }
+
+  private async onRecoverSession(ws: WebSocket, msg: ClientMessage, player: WsPlayer) {
+    const currentPhase = (await this.persistenceApi.getGame(player.gameId)).currentPhase;
+    let playerInGame: boolean;
+    try {
+      playerInGame = (await this.persistenceApi.getPlayer(player.privatePlayerId)).gameId === player.gameId;
+    } catch(error) {
+      playerInGame = false;
+    }
+
+    const srMessage: SessionRecoveredMessage = {
+      type: Events.SESSION_RECOVERED,
+      currentPhase, playerInGame
+    };
+    this.wsServer.sendMessage(ws, srMessage);
+  }
 
   public async isInPhase(phase: GamePhases, gameId: string): Promise<boolean> {
     return (await this.persistenceApi.getGame(gameId)).currentPhase === phase;

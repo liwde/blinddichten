@@ -57,6 +57,14 @@ export class InMemoryPersistence implements PersistenceApi {
     this.players.set(wsPlayer.privatePlayerId, player);
   }
 
+  public async getPlayer(privatePlayerId: string) {
+    const player = this.players.get(privatePlayerId);
+    if (!player) {
+      throw new Error('Player doesn\'t exist');
+    }
+    return player;
+  }
+
   public async removePlayer(privatePlayerId: string) {
     this.players.delete(privatePlayerId);
   }

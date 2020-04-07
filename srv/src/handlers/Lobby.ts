@@ -1,6 +1,6 @@
 import * as WebSocket from 'ws';
 import { PersistenceApi } from '../persistence/API';
-import { WsServer, WsHandlerFnReturn, PromisedWsHandlerFnReturn } from '../servers/WsServer';
+import { WsServer, PromisedWsHandlerFnReturn } from '../servers/WsServer';
 import { ClientMessage, Actions, Events, LobbyUpdatedMessage, Errors, CloseGameMessage, ChangeLobbyMessage, GameEnteredMessage } from '../Messages';
 import { WsPlayer } from '../servers/WsPlayer';
 import { GamePhaseHandler, GamePhases } from './GamePhases';
@@ -15,6 +15,8 @@ export class Lobby {
     this.wsServer.on(Actions.UNREADY_LOBBY, this.onUnreadyLobby.bind(this));
     this.wsServer.on(Actions.DISCONNECT, this.onDisconnect.bind(this));
     this.wsServer.on(Actions.CLOSE_GAME, this.onCloseGame.bind(this));
+    // Lobby must not handle recovering, as players are removed immediately.
+    // Instead, the client must re-enter the game.
   }
 
   private async getGameSettings(gameId: string) {

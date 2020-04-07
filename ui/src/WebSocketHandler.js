@@ -24,7 +24,7 @@ export default class WebSocketHandler extends EventEmitter {
 
     this.socket.addEventListener('close', () => {
       clearInterval(this.heartbeatIntervalHandle);
-      setTimeout(this.createSocket, 1000)
+      setTimeout(() => this.createSocket(), 1000);
     });
 
     this.socket.addEventListener('message', event => {

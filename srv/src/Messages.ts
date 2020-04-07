@@ -1,5 +1,8 @@
+import { GamePhases } from "./handlers/GamePhases";
+
 export enum Events {
   GAME_ENTERED = 'gameEntered',
+  SESSION_RECOVERED = 'sessionRecovered',
 
   LOBBY_UPDATED = 'lobbyUpdated',
   LOBBY_COMPLETED = 'lobbyCompleted',
@@ -10,15 +13,13 @@ export enum Events {
 
   NEXT_GAME_STARTED = 'nextGameStarted',
 
-  HEARTBEAT_REQUESTED = 'heartbeatRequested',
-  GAME_STATE_SENT = 'gameStateSent',
-
   ERROR_OCCURRED = 'errorOccurred'
 }
 
 export enum Actions {
   CREATE_GAME = 'createGame',
   ENTER_GAME = 'enterGame',
+  RECOVER_SESSION = 'recoverSession',
 
   CHANGE_LOBBY = 'changeLobby',
   READY_LOBBY = 'readyLobby',
@@ -29,7 +30,6 @@ export enum Actions {
 
   START_NEXT_GAME = 'startNextGame',
 
-  GET_GAME_STATE = 'getGameState',
   SEND_HEARTBEAT = 'sendHeartbeat',
 
   // Virtual Actions
@@ -53,6 +53,12 @@ export interface ClientMessage {
 
 export interface EnterGameMessage extends ClientMessage {
   gameId: string;
+}
+
+export interface RecoverSessionMessage extends ClientMessage {
+  gameId: string;
+  privatePlayerId: string;
+  publicPlayerId: string;
 }
 
 export interface ChangeLobbyMessage extends ClientMessage {
@@ -83,6 +89,11 @@ export interface GameEnteredMessage extends ServerMessage {
   publicPlayerId: string;
   privatePlayerId: string;
   gameId: string;
+}
+
+export interface SessionRecoveredMessage extends ServerMessage {
+  currentPhase: GamePhases,
+  playerInGame: boolean
 }
 
 export interface LobbyUpdatedMessage extends ServerMessage {

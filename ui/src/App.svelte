@@ -45,9 +45,13 @@
       gameId = location.hash.substr(1);
       const existingGame = window.localStorage.getItem('game_' + gameId);
       if (existingGame) {
-        // TODO: Recover state instead of entering again
+        let existingGameParsed = JSON.parse(existingGame);
+        privatePlayerId = existingGameParsed.privatePlayerId;
+        publicPlayerId = existingGameParsed.publicPlayerId;
+        wsHandler.sendMessage({ type: 'recoverSession', gameId, privatePlayerId });
+      } else {
+        wsHandler.sendMessage({ type: 'enterGame', gameId });
       }
-      wsHandler.sendMessage({ type: 'enterGame', gameId });
     }
   }
 
@@ -64,7 +68,7 @@
 
 <app>
   {#if gameId}
-    <Game bind:wsHandler="{wsHandler}" bind:publicPlayerId="{publicPlayerId}" />
+    <Game bind:wsHandler="{wsHandler}" bind:gameId="{gameId}" bind:publicPlayerId="{publicPlayerId}" />
   {:else}
     <Home on:createGame="{createGame}" bind:createDisabled="{waitingForGameCreation}" />
   {/if}

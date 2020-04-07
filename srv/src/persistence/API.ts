@@ -8,6 +8,7 @@ export interface PersistenceApi {
   deleteGame(gameId: string): Promise<void>;
   getGame(gameId: string): Promise<Game>;
   addPlayer(player: WsPlayer, isOwner?: boolean): Promise<void>;
+  getPlayer(playerId: string): Promise<Player>;
   removePlayer(privatePlayerId: string): Promise<void>;
 
   getPlayersByGame(gameId: string): Promise<Player[]>;
