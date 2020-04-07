@@ -33,6 +33,12 @@ export class GamePhaseHandler {
     this.wsServer.sendMessage(ws, srMessage);
   }
 
+  public async getPlayersForExternal(gameId: string) {
+    return (await this.persistenceApi.getPlayersByGame(gameId)).map(({ publicPlayerId, name, isOwner, ready }) => {
+      return { publicPlayerId, name, isOwner, ready };
+    });
+  }
+
   public async isInPhase(phase: GamePhases, gameId: string): Promise<boolean> {
     return (await this.persistenceApi.getGame(gameId)).currentPhase === phase;
   }

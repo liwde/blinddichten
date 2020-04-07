@@ -24,27 +24,24 @@ export class Lobby {
     return { rounds };
   }
 
-  private async getPlayersForLobby(gameId: string) {
-    return (await this.persistenceApi.getPlayersByGame(gameId)).map(({ publicPlayerId, name, isOwner, ready }) => {
-      return { publicPlayerId, name, isOwner, ready };
-    });
-  }
-
   private async getLobby(gameId: string) {
-    const [ players, settings ] = await Promise.all([this.getPlayersForLobby(gameId), this.getGameSettings(gameId)]);
+    const [ players, settings ] = await Promise.all([this.gamePhaseHandler.getPlayersForExternal(gameId), this.getGameSettings(gameId)]);
     return { players, settings };
   }
 
   private async sendAndEventuallyCloseLobby(gameId: string) {
-    const lobby = await this.getLobby(gameId);
+    const [ players, settings ] = await Promise.all([
+      this.gamePhaseHandler.getPlayersForExternal(gameId),
+      this.getGameSettings(gameId)
+    ]);
 
     const luMsg: LobbyUpdatedMessage = {
       type: Events.LOBBY_UPDATED,
-      lobby
+      players, settings
     };
     this.wsServer.broadcastMessage(gameId, luMsg);
 
-    if (lobby.players.length > 0 && lobby.players.every(p => p.ready)) {
+    if (players.length > 0 && players.every(p => p.ready)) {
       await this.gamePhaseHandler.switchToPhase(GamePhases.WRITING, gameId);
       this.wsServer.broadcastMessage(gameId, {
         type: Events.LOBBY_COMPLETED
@@ -140,11 +137,10 @@ export class Lobby {
 
   @synchronizePerGameId
   private async onDisconnect(_ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
-    if (!await this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
-      return; // generic event, no message sent
+    if (await this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
+      await this.persistenceApi.removePlayer(player.privatePlayerId);
+      await this.sendAndEventuallyCloseLobby(player.gameId);
     }
-    await this.persistenceApi.removePlayer(player.privatePlayerId);
-    await this.sendAndEventuallyCloseLobby(player.gameId);
   }
 
   @synchronizePerGameId

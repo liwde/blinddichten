@@ -97,14 +97,16 @@ export interface SessionRecoveredMessage extends ServerMessage {
 }
 
 export interface LobbyUpdatedMessage extends ServerMessage {
-  lobby: any; // TODO
+  players: any[]; // TODO
+  settings: any;
 }
 
 export interface WritingUpdatedMessage extends ServerMessage {
-  players: any; // TODO
+  status: any; // TODO
+  players: any[]; // TODO
 }
 
-export interface WritingNextMessage extends ServerMessage {
+export interface WritingNextMessage extends WritingUpdatedMessage {
   title: string;
   lastVerse: string;
 }

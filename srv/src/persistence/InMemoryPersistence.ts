@@ -4,10 +4,12 @@ import { DEFAULT_NUM_ROUNDS, DEFAULT_PLAYER_NAME } from "../config";
 import { GamePhases } from "../handlers/GamePhases";
 import { Player } from "./entities/Player";
 import { WsPlayer } from "../servers/WsPlayer";
+import { Verse } from "./entities/Verse";
 
 export class InMemoryPersistence implements PersistenceApi {
   private games: Map<string, Game> = new Map();
   private players: Map<string, Player> = new Map();
+  private verses: Map<{ gameId: string, privatePlayerId: string, verseNo: number}, Verse> = new Map();
 
   public async createGame(wsPlayer: WsPlayer) {
     if (this.games.get(wsPlayer.gameId)) {
@@ -17,6 +19,7 @@ export class InMemoryPersistence implements PersistenceApi {
       gameId: wsPlayer.gameId,
       owner: wsPlayer.privatePlayerId,
       rounds: DEFAULT_NUM_ROUNDS,
+      currentChunk: 0,
       currentPhase: GamePhases.LOBBY
     };
     this.games.set(wsPlayer.gameId, game);
@@ -111,5 +114,15 @@ export class InMemoryPersistence implements PersistenceApi {
       throw new Error('Game doesn\'t exist');
     }
     game.currentPhase = phase;
+  }
+
+  public async addVerse(gameId: string, privatePlayerId: string, verseNo: number, text: string) {
+    const key = { gameId, privatePlayerId, verseNo };
+    const verse = this.verses.get(key);
+    if (verse) {
+      verse.text = text;
+    } else {
+      this.verses.set(key, { gameId, privatePlayerId, verseNo, text});
+    }
   }
 }

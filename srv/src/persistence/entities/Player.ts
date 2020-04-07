@@ -1,6 +1,6 @@
 export interface Player {
+  privatePlayerId: string; // key
   publicPlayerId: string;
-  privatePlayerId: string;
   gameId: string;
   name: string;
   isOwner: boolean;

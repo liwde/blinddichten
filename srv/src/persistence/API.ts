@@ -8,7 +8,7 @@ export interface PersistenceApi {
   deleteGame(gameId: string): Promise<void>;
   getGame(gameId: string): Promise<Game>;
   addPlayer(player: WsPlayer, isOwner?: boolean): Promise<void>;
-  getPlayer(playerId: string): Promise<Player>;
+  getPlayer(privatePlayerId: string): Promise<Player>;
   removePlayer(privatePlayerId: string): Promise<void>;
 
   getPlayersByGame(gameId: string): Promise<Player[]>;
@@ -17,4 +17,6 @@ export interface PersistenceApi {
   updatePlayersReady(gameId: string, ready: boolean): Promise<void>;
   updateGameRounds(gameId: string, rounds: number): Promise<void>;
   updateGamePhase(gameId: string, phase: GamePhases): Promise<void>;
+
+  addVerse(gameId: string, privatePlayerId: string, verseNo: number, text: string): Promise<void>; // mysql: INSERT ... ON DUPLICATE KEY UPDATE!
 }

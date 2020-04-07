@@ -11,8 +11,8 @@
   let name;
 
   function lobbyUpdated(msg) {
-    players = msg.lobby.players;
-    rounds = msg.lobby.settings.rounds;
+    players = msg.players;
+    rounds = msg.settings.rounds;
     ready = players.find(p => p.publicPlayerId === publicPlayerId).ready;
     owner = players.find(p => p.publicPlayerId === publicPlayerId).isOwner;
   }
