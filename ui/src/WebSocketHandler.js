@@ -1,7 +1,9 @@
-export default class WebSocketHandler {
+import EventEmitter from './util/EventEmitter';
+
+export default class WebSocketHandler extends EventEmitter {
   constructor(serverUri) {
+    super();
     this.serverUri = serverUri;
-    this.on = {};
     this.createSocket();
   }
 
@@ -27,9 +29,7 @@ export default class WebSocketHandler {
 
     this.socket.addEventListener('message', event => {
       const msg = JSON.parse(event.data);
-      if (msg.type && this.on[msg.type]) {
-        this.on[msg.type](msg);
-      }
+      this.emit(msg.type, msg);
     });
   }
 

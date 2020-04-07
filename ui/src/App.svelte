@@ -13,7 +13,7 @@
     wsHandler.sendMessage({ type: 'createGame' });
   }
 
-  wsHandler.on.gameEntered = function gameEntered(msg) {
+  function gameEntered(msg) {
     gameId = msg.gameId;
     privatePlayerId = msg.privatePlayerId;
     publicPlayerId = msg.publicPlayerId;
@@ -21,10 +21,15 @@
     if (waitingForGameCreation) {
       location.hash = gameId;
     }
+    const lastPlayerName = window.localStorage.getItem('playerName');
+    if (lastPlayerName) {
+      wsHandler.sendMessage({ type: 'changeLobby', name: lastPlayerName });
+    }
     waitingForGameCreation = false;
-  };
+  }
+  wsHandler.on('gameEntered', gameEntered);
 
-  wsHandler.on.errorOccurred = function errorOccurred(msg) {
+  function errorOccurred(msg) {
     //if (msg.msg === 'gameNotFound') {
     // TODO: We need to find a way when errors can be recovered by refreshing the state -- and then do this.
     // For now, we just always reset and go home
@@ -32,7 +37,8 @@
     location.hash = '';
     alert(msg.msg);
     //}
-  };
+  }
+  wsHandler.on('errorOccurred', errorOccurred);
 
   function hashChanged() {
     if (location.hash && location.hash.length > 1 && gameId !== location.hash.substr(1)) {
@@ -47,7 +53,11 @@
 
   window.onhashchange = hashChanged
 
-  onDestroy(() => wsHandler.close());
+  onDestroy(() => {
+    wsHandler.off('gameEntered', gameEntered);
+    wsHandler.off('errorOccurred', errorOccurred);
+    wsHandler.close()
+  });
 
   hashChanged();
 </script>

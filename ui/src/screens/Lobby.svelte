@@ -2,21 +2,28 @@
   export let wsHandler;
   export let publicPlayerId;
 
-  import debounce from '../util/debounce';
+  import debounce from '../util/debounce';import { onDestroy } from 'svelte';
 
   let players = [];
   let rounds;
   let owner;
   let ready = false;
+  let name;
 
-  wsHandler.on.lobbyUpdated = function(msg) {
+  function lobbyUpdated(msg) {
     players = msg.lobby.players;
     rounds = msg.lobby.settings.rounds;
     ready = players.find(p => p.publicPlayerId === publicPlayerId).ready;
     owner = players.find(p => p.publicPlayerId === publicPlayerId).isOwner;
   }
+  wsHandler.on('lobbyUpdated', lobbyUpdated);
+
+  onDestroy(() => {
+    wsHandler.off('lobbyUpdated', lobbyUpdated);
+  });
 
   function editName(event) {
+    name = event.target.value;
     wsHandler.sendMessage({
       type: 'changeLobby',
       name: event.target.value
@@ -31,6 +38,14 @@
     });
   }
   const editRoundsDebounced = debounce(editRounds, 1000);
+
+  function readyLobby() {
+    window.localStorage.setItem('playerName', name);
+    wsHandler.sendMessage({ type: 'readyLobby' });
+  }
+  function unreadyLobby() {
+    wsHandler.sendMessage({ type: 'unreadyLobby' });
+  }
 </script>
 
 <main>
@@ -54,9 +69,9 @@
     </ol>
   </players>
   {#if ready}
-    <button on:click="{wsHandler.sendMessage({ type: 'unreadyLobby' })}">Ändern</button>
+    <button on:click="{unreadyLobby}">Ändern</button>
   {:else}
-    <button on:click="{wsHandler.sendMessage({ type: 'readyLobby' })}">Fertig</button>
+    <button on:click="{readyLobby}">Fertig</button>
   {/if}
 </main>
 

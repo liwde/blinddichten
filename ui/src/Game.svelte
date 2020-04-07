@@ -8,9 +8,9 @@
   import Writing from './screens/Writing.svelte';
   import Viewing from './screens/Viewing.svelte';
 
-  wsHandler.on.lobbyCompleted = function(msg) {
+  wsHandler.on('lobbyCompleted', function(msg) {
     gamePhase = 'writing';
-  }
+  });
 
   let gamePhase = 'lobby';
 </script>
