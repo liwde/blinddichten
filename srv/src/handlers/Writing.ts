@@ -59,8 +59,8 @@ export class Writing {
     let title = '';
     let lastVerse = '';
     if (status.currentChunk === 0) { // on first chunk, there is nothing in the database
-      title = await this.persistenceApi.getVerse(gameId, readFromPlayerId, 0);
-      lastVerse = await this.persistenceApi.getVerse(gameId, readFromPlayerId, 2 * status.currentChunk - 1);
+      title = await this.persistenceApi.getVerseText(gameId, readFromPlayerId, 0);
+      lastVerse = await this.persistenceApi.getVerseText(gameId, readFromPlayerId, 2 * status.currentChunk - 1);
     }
 
     const wnMsg: WritingNextMessage = {
@@ -94,6 +94,19 @@ export class Writing {
     await this.sendWritingNextForAll(gameId);
   }
 
+  private async getAllPoems(gameId: string) {
+    const players = await this.persistenceApi.getPlayersByGame(gameId);
+    return Promise.all(players.map(async player => {
+      const verses = await this.persistenceApi.getAllVerseTexts(gameId, player.privatePlayerId);
+      return {
+        publicPlayerId: player.publicPlayerId,
+        playerName: player.name,
+        title: verses[0],
+        text: verses.slice(1).join('\r\n')
+      };
+    }));
+  }
+
   @synchronizePerGameId
   private async onReadyWriting(ws: WebSocket, msg: ReadyWritingMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     if (!this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
@@ -111,21 +124,15 @@ export class Writing {
 
     if (players.every(p => p.ready)) {
       if (status.isLastChunk) {
-        // TODO: get all poems as texts
-        const poems = {
-          [player.publicPlayerId]: {
-            title: 'Ein Gedicht',
-            text: 'Es war einmal in dunkler Nacht'
-          }
-        };
-        // END TODO
-        this.wsServer.broadcastMessage(player.gameId, {
+        const poems = await this.getAllPoems(player.gameId);
+        const wcMsg: WritingCompletedMessage = {
           type: Events.WRITING_COMPLETED,
           poems
-        } as WritingCompletedMessage);
+        };
+        this.wsServer.broadcastMessage(player.gameId, wcMsg);
       } else {
         this.persistenceApi.updatePlayersReady(player.gameId, false);
-        this.persistenceApi.updateGameCurrentChunk(player.gameId, status.currentChunk + 1);
+        this.persistenceApi.updateGameChunk(player.gameId, status.currentChunk + 1);
         const nextStatus = await this.getWritingStatus(player.gameId);
         const nextPlayers = await this.gamePhaseHandler.getPlayersForExternal(player.gameId);
         this.sendWritingNextForAll(player.gameId, nextPlayers, nextStatus);
@@ -134,7 +141,7 @@ export class Writing {
       const wuMsg: WritingUpdatedMessage = {
         type: Events.WRITING_UPDATED,
         players, status
-      }
+      };
       this.wsServer.broadcastMessage(player.gameId, wuMsg);
     }
   }
@@ -156,7 +163,7 @@ export class Writing {
     const wuMsg: WritingUpdatedMessage = {
       type: Events.WRITING_UPDATED,
       players, status
-    }
+    };
     this.wsServer.broadcastMessage(player.gameId, wuMsg);
   }
 
@@ -164,6 +171,13 @@ export class Writing {
     if (await this.gamePhaseHandler.isInPhase(GamePhases.WRITING, player.gameId)) {
       this.sendWritingNext(player.gameId, player.privatePlayerId, ws);
     }
-    // TODO: Recover with WRITING COMPLETED for phase VIEWING as well -- we have the logic here anyways!
+    if (await this.gamePhaseHandler.isInPhase(GamePhases.VIEWING, player.gameId)) {
+      const poems = await this.getAllPoems(player.gameId);
+      const wcMsg: WritingCompletedMessage = {
+        type: Events.WRITING_COMPLETED,
+        poems
+      };
+      this.wsServer.sendMessage(player.ws, wcMsg);
+    }
   }
 }

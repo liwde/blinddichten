@@ -17,6 +17,9 @@ export interface PersistenceApi {
   updatePlayersReady(gameId: string, ready: boolean): Promise<void>;
   updateGameRounds(gameId: string, rounds: number): Promise<void>;
   updateGamePhase(gameId: string, phase: GamePhases): Promise<void>;
+  updateGameChunk(gameId: string, chunk: number): Promise<void>;
 
   addVerse(gameId: string, privatePlayerId: string, verseNo: number, text: string): Promise<void>; // mysql: INSERT ... ON DUPLICATE KEY UPDATE!
+  getVerseText(gameId: string, privatePlayerId: string, verseNo: number): Promise<string>;
+  getAllVerseTexts(gameId: string, privatePlayerId: string): Promise<string[]>;
 }

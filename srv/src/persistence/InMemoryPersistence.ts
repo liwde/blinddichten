@@ -116,6 +116,14 @@ export class InMemoryPersistence implements PersistenceApi {
     game.currentPhase = phase;
   }
 
+  public async updateGameChunk(gameId: string, chunk: number) {
+    const game = this.games.get(gameId);
+    if (!game) {
+      throw new Error('Game doesn\'t exist');
+    }
+    game.currentChunk = chunk;
+  }
+
   public async addVerse(gameId: string, privatePlayerId: string, verseNo: number, text: string) {
     const key = { gameId, privatePlayerId, verseNo };
     const verse = this.verses.get(key);
@@ -124,5 +132,25 @@ export class InMemoryPersistence implements PersistenceApi {
     } else {
       this.verses.set(key, { gameId, privatePlayerId, verseNo, text});
     }
+  }
+
+  public async getVerseText(gameId: string, privatePlayerId: string, verseNo: number) {
+    const key = { gameId, privatePlayerId, verseNo };
+    const verse = this.verses.get(key);
+    if (!verse) {
+      throw new Error('Verse doesn\'t exist');
+    }
+    return verse.text;
+  }
+
+  public async getAllVerseTexts(gameId: string, privatePlayerId: string) {
+    const verses: Verse[] = [];
+    this.verses.forEach(verse => {
+      if (verse.gameId === gameId && verse.privatePlayerId === privatePlayerId) {
+        verses.push(verse);
+      }
+    });
+    // TODO: might be the wrong way around, I never know with these sorters...
+    return verses.sort((v1, v2) => v2.verseNo - v1.verseNo).map(v => v.text);
   }
 }
