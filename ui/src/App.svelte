@@ -48,7 +48,7 @@
         let existingGameParsed = JSON.parse(existingGame);
         privatePlayerId = existingGameParsed.privatePlayerId;
         publicPlayerId = existingGameParsed.publicPlayerId;
-        wsHandler.sendMessage({ type: 'recoverSession', gameId, privatePlayerId });
+        wsHandler.sendMessage({ type: 'recoverSession', gameId, privatePlayerId, publicPlayerId });
       } else {
         wsHandler.sendMessage({ type: 'enterGame', gameId });
       }

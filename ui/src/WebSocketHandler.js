@@ -4,6 +4,7 @@ export default class WebSocketHandler extends EventEmitter {
   constructor(serverUri) {
     super();
     this.serverUri = serverUri;
+    this.recreatingConnection = false;
     this.createSocket();
   }
 
@@ -18,12 +19,17 @@ export default class WebSocketHandler extends EventEmitter {
     this.socket = new WebSocket(this.serverUri);
 
     this.socket.addEventListener('open', event => {
+      if (this.recreatingConnection) {
+        this.emit('socketReconnected');
+        this.recreatingConnection = false;
+      }
       socketReady();
       this.heartbeatIntervalHandle = setInterval(() => this.heartbeat(), 2 * 1000);
     });
 
     this.socket.addEventListener('close', () => {
       clearInterval(this.heartbeatIntervalHandle);
+      this.recreatingConnection = true;
       setTimeout(() => this.createSocket(), 1000);
     });
 

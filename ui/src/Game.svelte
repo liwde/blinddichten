@@ -9,14 +9,22 @@
   import Viewing from './screens/Viewing.svelte';
   import { onDestroy } from 'svelte';
 
+  function socketRecreated() {
+        wsHandler.sendMessage({ type: 'recoverSession', gameId, privatePlayerId, publicPlayerId });
+  }
+  wsHandler.on('socketRecreated', socketRecreated);
+
   function sessionRecovered(msg) {
     gamePhase = msg.currentPhase;
 
-    if (gamePhase === 'lobby') {
-      wsHandler.sendMessage({ type: 'enterGame', gameId });
-    } else if(!msg.playerInGame) {
-      gameId = null;
-      location.hash = '';
+    if(!msg.playerInGame) {
+      if (gamePhase === 'lobby') {
+        // in the lobby, we may simply try to re-enter
+        wsHandler.sendMessage({ type: 'enterGame', gameId });
+      } else  {
+        gameId = null;
+        location.hash = '';
+      }
     }
   }
   wsHandler.on('sessionRecovered', sessionRecovered);
@@ -28,6 +36,7 @@
 
 
   onDestroy(() => {
+    wsHandler.off('socketRecreated', socketRecreated);
     wsHandler.off('lobbyCompleted', lobbyCompleted);
     wsHandler.off('sessionRecovered', sessionRecovered);
   });
