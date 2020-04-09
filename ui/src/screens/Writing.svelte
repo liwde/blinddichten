@@ -15,6 +15,7 @@
 
   import { onDestroy } from 'svelte';
   import LockingButton from '../controls/LockingButton.svelte';
+  import LoadingIndicator from '../controls/LoadingIndicator.svelte';
   import PlayerStatus from '../controls/PlayerStatus.svelte';
   import PoemInput from '../controls/PoemInput.svelte';
   import PoemProgress from '../controls/PoemProgress.svelte';
@@ -48,8 +49,13 @@
 </script>
 
 <main>
-  <PoemInput bind:title bind:lastVerse bind:verseOne bind:verseTwo bind:isFirstChunk="{status.isFirstChunk}" bind:isLastChunk="{status.isLastChunk}" />
-  <LockingButton on:lock="{readyWriting}" on:unlock="{unreadyWriting}" bind:isLocked="{ready}" />
+  <h1>Schreiben</h1>
+  {#if status}
+    <PoemInput bind:title bind:lastVerse bind:verseOne bind:verseTwo bind:isFirstChunk="{status.isFirstChunk}" bind:isLastChunk="{status.isLastChunk}" />
+    <LockingButton on:lock="{readyWriting}" on:unlock="{unreadyWriting}" bind:isLocked="{ready}" />
+  {:else}
+    <LoadingIndicator />
+  {/if}
   <PlayerStatus bind:players bind:publicPlayerId />
   <PoemProgress bind:status />
 </main>
