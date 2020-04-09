@@ -53,7 +53,7 @@
 <main>
   <h1>Schreiben</h1>
   {#if status}
-    <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" />
+    <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" isLocked="{ready}" />
     <LockingButton on:lock="{readyWriting}" on:unlock="{unreadyWriting}" isLocked="{ready}" />
   {:else}
     <LoadingIndicator />

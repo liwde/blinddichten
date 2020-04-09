@@ -55,7 +55,7 @@ export class Viewing {
 
     this.wsServer.broadcastMessage(player.gameId, {
       type: Events.LOBBY_UPDATED,
-      lobby
-    } as LobbyUpdatedMessage);
+      // lobby
+    });
   }
 }

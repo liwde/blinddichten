@@ -58,7 +58,7 @@
     <h2>Einstellungen</h2>
     Rundenzahl: <input disabled="{!owner}" type="number" value="{rounds}" on:keyup="{editRoundsDebounced}" on:change="{editRounds}" />
   </settings>
-  <PlayerList players publicPlayerId on:editName="{editName}" />
+  <PlayerList players="{players}" publicPlayerId="{publicPlayerId}" on:editName="{editName}" />
   <LockingButton on:lock="{readyLobby}" on:unlock="{unreadyLobby}" isLocked="{ready}" />
 </main>
 

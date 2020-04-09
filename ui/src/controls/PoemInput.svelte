@@ -18,17 +18,17 @@
 
 <poem>
   {#if chunk === 0}
-    <h2><LockableInput bind:isLocked bind:value="{verseOne}" /></h2>
+    <h2><LockableInput isLocked="{isLocked}" bind:value="{verseOne}" /></h2>
     <ol start="1">
-      <li><LockableInput bind:isLocked bind:value="{verseTwo}" /></li>
+      <li><LockableInput isLocked="{isLocked}" bind:value="{verseTwo}" /></li>
     </ol>
   {:else}
     <h2>{title}</h2>
     <ol start="{lastVerseNo}">
       <li>{lastVerse}</li>
-      <li><LockableInput bind:isLocked bind:value="{verseOne}" /></li>
+      <li><LockableInput isLocked="{isLocked}" bind:value="{verseOne}" /></li>
       {#if !isLastChunk}
-        <li><LockableInput bind:isLocked bind:value="{verseTwo}" /></li>
+        <li><LockableInput isLocked="{isLocked}" bind:value="{verseTwo}" /></li>
       {/if}
     </ol>
   {/if}

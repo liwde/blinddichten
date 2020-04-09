@@ -108,9 +108,9 @@ export class Writing {
       const verses = await this.persistenceApi.getAllVerseTexts(gameId, player.privatePlayerId);
       return {
         publicPlayerId: player.publicPlayerId,
-        playerName: player.name,
+        author: player.name,
         title: verses[0],
-        text: verses.slice(1).join('\r\n')
+        verses: verses.slice(1)
       };
     }));
   }
@@ -165,7 +165,7 @@ export class Writing {
       return;
     }
 
-    await this.persistenceApi.updatePlayerReady(player.privatePlayerId, true);
+    await this.persistenceApi.updatePlayerReady(player.privatePlayerId, false);
     const status = await this.getWritingStatus(player.gameId);
     const players = await this.gamePhaseHandler.getPlayersForExternal(player.gameId);
 

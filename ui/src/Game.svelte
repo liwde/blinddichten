@@ -8,6 +8,9 @@
   import Viewing from './screens/Viewing.svelte';
   import { onDestroy } from 'svelte';
 
+  let gamePhase = 'lobby';
+  let poems;
+
   function socketRecreated() {
         wsHandler.sendMessage({ type: 'recoverSession', gameId, privatePlayerId, publicPlayerId });
   }
@@ -34,17 +37,18 @@
   wsHandler.on('lobbyCompleted', lobbyCompleted);
 
   function writingCompleted(msg) {
+    poems = msg.poems;
     gamePhase = 'viewing';
   }
+  wsHandler.on('writingCompleted', writingCompleted);
 
 
   onDestroy(() => {
     wsHandler.off('socketRecreated', socketRecreated);
     wsHandler.off('lobbyCompleted', lobbyCompleted);
+    wsHandler.off('writingCompleted', writingCompleted);
     wsHandler.off('sessionRecovered', sessionRecovered);
   });
-
-  let gamePhase = 'lobby';
 </script>
 
 {#if gamePhase === 'lobby'}
@@ -52,5 +56,5 @@
 {:else if gamePhase === 'writing'}
   <Writing wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" />
 {:else}
-  <Viewing />
+  <Viewing poems="{poems}" />
 {/if}
