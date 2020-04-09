@@ -1,7 +1,6 @@
 <script>
   export let wsHandler;
   export let gameId;
-  export let privatePlayerId;
   export let publicPlayerId;
 
   import Lobby from './screens/Lobby.svelte';
@@ -34,6 +33,10 @@
   }
   wsHandler.on('lobbyCompleted', lobbyCompleted);
 
+  function writingCompleted(msg) {
+    gamePhase = 'viewing';
+  }
+
 
   onDestroy(() => {
     wsHandler.off('socketRecreated', socketRecreated);
@@ -45,9 +48,9 @@
 </script>
 
 {#if gamePhase === 'lobby'}
-  <Lobby bind:wsHandler="{wsHandler}" bind:publicPlayerId />
+  <Lobby wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" />
 {:else if gamePhase === 'writing'}
-  <Writing bind:wsHandler="{wsHandler}" bind:publicPlayerId />
+  <Writing wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" />
 {:else}
-  <Viewing bind:wsHandler="{wsHandler}" />
+  <Viewing />
 {/if}

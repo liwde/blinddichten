@@ -1,33 +1,36 @@
 <script>
-  export let isFirstChunk;
+  export let chunk;
   export let isLastChunk;
   export let isLocked;
 
   export let title = "";
-  export let lastLine = "";
+  export let lastVerse = "";
 
   // Svelte can't handle props with numbers :/
   export let verseOne = "";
   export let verseTwo = "";
 
   import LockableInput from './LockableInput.svelte';
+
+  let lastVerseNo = 1;
+  $: lastVerseNo = 2 * chunk + 1;
 </script>
 
 <poem>
-  {#if isFirstChunk}
+  {#if chunk === 0}
     <h2><LockableInput bind:isLocked bind:value="{verseOne}" /></h2>
-    <ul>
+    <ol start="1">
       <li><LockableInput bind:isLocked bind:value="{verseTwo}" /></li>
-    </ul>
+    </ol>
   {:else}
     <h2>{title}</h2>
-    <ul>
-      <li>{lastLine}</li>
+    <ol start="{lastVerseNo}">
+      <li>{lastVerse}</li>
       <li><LockableInput bind:isLocked bind:value="{verseOne}" /></li>
       {#if !isLastChunk}
         <li><LockableInput bind:isLocked bind:value="{verseTwo}" /></li>
       {/if}
-    </ul>
+    </ol>
   {/if}
 </poem>
 

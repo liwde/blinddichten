@@ -68,9 +68,9 @@
 
 <app>
   {#if gameId}
-    <Game bind:wsHandler="{wsHandler}" bind:gameId="{gameId}" bind:publicPlayerId="{publicPlayerId}" />
+    <Game wsHandler="{wsHandler}" gameId="{gameId}" publicPlayerId="{publicPlayerId}" />
   {:else}
-    <Home on:createGame="{createGame}" bind:createDisabled="{waitingForGameCreation}" />
+    <Home on:createGame="{createGame}" createDisabled="{waitingForGameCreation}" />
   {/if}
 </app>
 

@@ -11,7 +11,7 @@
   let verseOne;
   let verseTwo;
 
-  let ready;
+  let ready = false;
 
   import { onDestroy } from 'svelte';
   import LockingButton from '../controls/LockingButton.svelte';
@@ -23,6 +23,8 @@
   function writingNext(msg) {
     title = msg.title;
     lastVerse = msg.lastVerse;
+    verseOne = '';
+    verseTwo = '';
     writingUpdated(msg); // to handle players and status
   }
   wsHandler.on('writingNext', writingNext);
@@ -51,11 +53,11 @@
 <main>
   <h1>Schreiben</h1>
   {#if status}
-    <PoemInput bind:title bind:lastVerse bind:verseOne bind:verseTwo bind:isFirstChunk="{status.isFirstChunk}" bind:isLastChunk="{status.isLastChunk}" />
-    <LockingButton on:lock="{readyWriting}" on:unlock="{unreadyWriting}" bind:isLocked="{ready}" />
+    <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" />
+    <LockingButton on:lock="{readyWriting}" on:unlock="{unreadyWriting}" isLocked="{ready}" />
   {:else}
     <LoadingIndicator />
   {/if}
-  <PlayerStatus bind:players bind:publicPlayerId />
-  <PoemProgress bind:status />
+  <PlayerStatus players="{players}" publicPlayerId="{publicPlayerId}" />
+  <PoemProgress status="{status}" />
 </main>
