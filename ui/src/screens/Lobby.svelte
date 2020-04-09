@@ -2,7 +2,9 @@
   export let wsHandler;
   export let publicPlayerId;
 
-  import debounce from '../util/debounce';import { onDestroy } from 'svelte';
+  import debounce from '../util/debounce';
+  import { onDestroy } from 'svelte';
+  import PlayerList from '../controls/PlayerList.svelte';
 
   let players = [];
   let rounds;
@@ -23,13 +25,12 @@
   });
 
   function editName(event) {
-    name = event.target.value;
+    name = event.detail;
     wsHandler.sendMessage({
       type: 'changeLobby',
-      name: event.target.value
+      name: event.detail
     });
   }
-  const editNameDebounced = debounce(editName, 1000);
 
   function editRounds(event) {
     wsHandler.sendMessage({
@@ -40,6 +41,9 @@
   const editRoundsDebounced = debounce(editRounds, 1000);
 
   function readyLobby() {
+    if (!name) {
+      debugger;
+    }
     window.localStorage.setItem('playerName', name);
     wsHandler.sendMessage({ type: 'readyLobby' });
   }
@@ -54,20 +58,7 @@
     <h2>Einstellungen</h2>
     Rundenzahl: <input disabled="{!owner}" type="number" value="{rounds}" on:keyup="{editRoundsDebounced}" on:change="{editRounds}" />
   </settings>
-  <players>
-    <h2>Spieler</h2>
-    <ol>
-      {#each players as player}
-        <li class:ready="{player.ready}" class:me="{player.publicPlayerId === publicPlayerId}" class:owner="{player.isOwner}">
-          {#if player.publicPlayerId === publicPlayerId && !player.ready}
-            <input type="text" value="{player.name}" on:keyup="{editNameDebounced}" on:change="{editName}" />
-          {:else}
-            {player.name}
-          {/if}
-        </li>
-      {/each}
-    </ol>
-  </players>
+  <PlayerList bind:players bind:publicPlayerId on:editName="{editName}" />
   {#if ready}
     <button on:click="{unreadyLobby}">Ändern</button>
   {:else}
@@ -76,13 +67,5 @@
 </main>
 
 <style>
-  li.ready {
-    background-color: lightgreen;
-  }
-  li.me.ready {
-    background-color: #eee;
-  }
-  li.owner::after {
-    content: " 👑"
-  }
+
 </style>
