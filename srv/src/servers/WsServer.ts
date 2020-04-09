@@ -218,7 +218,7 @@ export class WsServer {
     try {
       ws.send(JSON.stringify(msg));
     } catch(error) {
-      console.error(error);
+      // We lost a client. He might reconnect, though, at which point we have a valid session again
     }
   }
 

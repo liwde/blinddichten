@@ -58,7 +58,9 @@ export class Writing {
 
     const selfOffset = dbPlayers.findIndex(p => p.privatePlayerId === privatePlayerId);
     if (selfOffset === -1) {
-      console.warn('Didn\'t find', privatePlayerId, 'in', dbPlayers);
+      // Player is not part of the DB.
+      // This can happen if a player disconnects at the lobby and isn't yet removed from the WsServer (who doesn't know about the lobby)
+      // Or if a player joins a game that has already started -- we can't send new lines for him/her
       return;
     }
     const accessIndex = (selfOffset + status.currentChunk) % dbPlayers.length;
