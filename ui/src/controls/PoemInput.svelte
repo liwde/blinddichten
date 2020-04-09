@@ -11,29 +11,48 @@
   export let verseTwo = "";
 
   import LockableInput from './LockableInput.svelte';
+  import LockingButton from './LockingButton.svelte';
 
-  let lastVerseNo = 1;
-  $: lastVerseNo = 2 * chunk + 1;
+  let lastVerseNo = 2 * chunk + 1;
+  let verseOneNo = 2 * chunk + 2;
+  let verseTwoNo = 2 * chunk + 3;
+  $: {
+    lastVerseNo = 2 * chunk + 1;
+    verseOneNo = 2 * chunk + 2;
+    verseTwoNo = 2 * chunk + 3;
+  }
 </script>
 
-<poem>
-  {#if chunk === 0}
-    <h2><LockableInput isLocked="{isLocked}" bind:value="{verseOne}" /></h2>
-    <ol start="1">
-      <li><LockableInput isLocked="{isLocked}" bind:value="{verseTwo}" /></li>
-    </ol>
-  {:else}
-    <h2>{title}</h2>
-    <ol start="{lastVerseNo}">
-      <li>{lastVerse}</li>
-      <li><LockableInput isLocked="{isLocked}" bind:value="{verseOne}" /></li>
-      {#if !isLastChunk}
-        <li><LockableInput isLocked="{isLocked}" bind:value="{verseTwo}" /></li>
+<poem class="card">
+  <div class="card-body">
+    {#if chunk === 0}
+      <h4><LockableInput isLocked="{isLocked}" bind:value="{verseOne}" placeholder="Titel" /></h4>
+      <ol start="1">
+        <li><LockableInput isLocked="{isLocked}" bind:value="{verseTwo}" placeholder="Vers 1" /></li>
+      </ol>
+    {:else}
+      <h4>{title}</h4>
+      {#if chunk === 2}
+      <hr/>
       {/if}
-    </ol>
-  {/if}
+      <ol start="{lastVerseNo}">
+        <li><span class="align">{lastVerse}</span></li>
+        <li><LockableInput isLocked="{isLocked}" bind:value="{verseOne}" placeholder="Vers {verseOneNo}" /></li>
+        {#if !isLastChunk}
+          <li><LockableInput isLocked="{isLocked}" bind:value="{verseTwo}" placeholder="Vers {verseTwoNo}" /></li>
+        {/if}
+      </ol>
+    {/if}
+    <LockingButton on:lock on:unlock isLocked="{isLocked}" />
+  </div>
 </poem>
 
 <style>
-
+  span.align {
+    display: inline-block;
+    margin: .5rem;
+  }
+  ol {
+    list-style-type: none;
+  }
 </style>

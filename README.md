@@ -21,6 +21,8 @@ The database is accessed through a simple API that can be implemented by differe
 
 The frontend is a webapp written with [Svelte](https://svelte.dev/). There are `controls` to handle generic data display, and `screens` that control the whole UI layout, as well as a `Game` component handling anything inside a running game, `WebSocketHandler` abstraction over WebSockets and the `App` component bringing it all together.
 
+The most beautiful UX is created by the awesome [PaperCSS](https://www.getpapercss.com/) library.
+
 - development: `npm run dev`
 - build: `npm run build`
 
@@ -29,7 +31,6 @@ The frontend is a webapp written with [Svelte](https://svelte.dev/). There are `
 This project is hot off the press, the main building blocks developed in under a week. There are lots of things to do:
 
 - **Add a real persistence in the backend.** MySQL should be supported to store the poems for a bit longer. Also, there should be put some more thought into regular cleanup of such database, especially for aborted rounds that were never finished.
-- **Add styling to the UI.** It's currently just plain HTML for the most part. There should be a clearer visual identity to this thing.
 - **Add non-essential features.** I'll list the ones I already have in mind:
   - a static page to view and print all poems
   - a "start new game" button on the Viewing screen -- one players clicks it, all players get a notification to join the new game

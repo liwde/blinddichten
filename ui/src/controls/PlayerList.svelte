@@ -23,7 +23,12 @@
           {#if player.publicPlayerId === publicPlayerId && !player.ready}
             <input type="text" value="{player.name}" on:keyup="{editNameDebounced}" on:change="{editName}" />
           {:else}
-            {player.name}
+            <span class="align">
+              {player.name}
+              {#if player.ready}
+                <span class="badge success">ready</span>
+              {/if}
+            </span>
           {/if}
         </li>
       {/each}
@@ -34,13 +39,18 @@
 </players>
 
 <style>
-  li.ready {
-    background-color: lightgreen;
+  players {
+    min-width: 200px;
   }
-  li.me.ready {
-    background-color: #eee;
+  ol {
+    max-width: 350px;
   }
-  li.owner::after {
+  input {
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+  }
+  li.owner:not(.me)::after {
     content: " 👑"
   }
 </style>

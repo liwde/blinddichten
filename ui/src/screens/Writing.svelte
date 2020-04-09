@@ -53,11 +53,18 @@
 <main>
   <h1>Schreiben</h1>
   {#if status}
-    <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" isLocked="{ready}" />
-    <LockingButton on:lock="{readyWriting}" on:unlock="{unreadyWriting}" isLocked="{ready}" />
+    <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" isLocked="{ready}" on:lock="{readyWriting}" on:unlock="{unreadyWriting}" />
   {:else}
     <LoadingIndicator />
   {/if}
-  <PlayerStatus players="{players}" publicPlayerId="{publicPlayerId}" />
-  <PoemProgress status="{status}" />
+  <div class="row flex-center">
+    <div class="sm-12 md-6 lg-6 col"><PlayerStatus players="{players}" publicPlayerId="{publicPlayerId}" /></div>
+    <div class="sm-12 md-6 lg-6 col"><PoemProgress status="{status}" /></div>
+  </div>
 </main>
+
+<style>
+  main {
+    max-width: 800px;
+  }
+</style>

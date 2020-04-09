@@ -12,6 +12,9 @@
       {#each players as player}
         <li class:ready="{player.ready}" class:me="{player.publicPlayerId === publicPlayerId}" class:owner="{player.isOwner}">
             {player.name}
+            {#if player.ready}
+              <span class="badge success">ready</span>
+            {/if}
         </li>
       {/each}
     </ol>
@@ -21,12 +24,6 @@
 </players>
 
 <style>
-  li.ready {
-    background-color: lightgreen;
-  }
-  li.me.ready {
-    background-color: #eee;
-  }
   li.owner::after {
     content: " 👑"
   }

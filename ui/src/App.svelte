@@ -66,6 +66,28 @@
   hashChanged();
 </script>
 
+<nav class="border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="/">blinddichten</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+    <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        <li><a href="https://blog.liwde.de" target="_blank">liwde</a></li>
+        <li><a href="https://www.github.com/liwde/blinddichten" target="_blank">GitHub</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
 <app>
   {#if gameId}
     <Game wsHandler="{wsHandler}" gameId="{gameId}" publicPlayerId="{publicPlayerId}" />
@@ -76,14 +98,7 @@
 
 <style>
   app {
+    display: block;
     padding: 1em;
-    max-width: 240px;
-    margin: 0 auto;
-  }
-
-  @media (min-width: 640px) {
-    app {
-      max-width: none;
-    }
   }
 </style>

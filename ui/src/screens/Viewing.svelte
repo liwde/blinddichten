@@ -8,13 +8,17 @@
   <h1>Alle Gedichte</h1>
   {#if poems}
     {#each poems as poem}
-      <h2>{poem.title}</h2>
-      <author>{poem.author}</author>
-      <verses>
-        {#each poem.verses as verse}
-          <verse>{verse}</verse>
-        {/each}
-      </verses>
+      <div class="card margin-bottom">
+        <div class="card-body">
+          <h3 class="card-title">{poem.title}</h3>
+          <h5 class="card-subtitle">von <author>{poem.author}</author></h5>
+          <p class="card-text">
+            {#each poem.verses as verse}
+              <verse>{verse}</verse>
+            {/each}
+          </p>
+        </div>
+      </div>
     {/each}
   {:else}
     <LoadingIndicator />
@@ -22,10 +26,13 @@
 </main>
 
 <style>
+  main {
+    max-width: 800px;
+  }
   author {
     font-style: italic;
   }
-  author, verses, verse {
+  verse {
     display: block;
   }
 </style>

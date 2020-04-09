@@ -54,14 +54,27 @@
 
 <main>
   <h1>Lobby</h1>
-  <settings>
-    <h2>Einstellungen</h2>
-    Rundenzahl: <input disabled="{!owner}" type="number" value="{rounds}" on:keyup="{editRoundsDebounced}" on:change="{editRounds}" />
+  <settings class="card">
+    <div class="card-body">
+      <h4>Einstellungen</h4>
+      <div class="form-group">
+        <label for="roundsInput">Rundenzahl</label>
+        <input class="input-block" id="roundsInput" disabled="{!owner}" type="number" value="{rounds}" on:keyup="{editRoundsDebounced}" on:change="{editRounds}" />
+      </div>
+    </div>
   </settings>
   <PlayerList players="{players}" publicPlayerId="{publicPlayerId}" on:editName="{editName}" />
   <LockingButton on:lock="{readyLobby}" on:unlock="{unreadyLobby}" isLocked="{ready}" />
 </main>
 
 <style>
-
+  main {
+    max-width: 1000px;
+  }
+  @media(min-width: 800px) {
+    settings {
+      width: 20rem;
+      float: right;
+    }
+  }
 </style>
