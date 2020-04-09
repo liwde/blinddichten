@@ -56,9 +56,9 @@ export class Writing {
     const accessIndex = (selfOffset + status.currentChunk) % dbPlayers.length;
     const readFromPlayerId = dbPlayers[accessIndex].privatePlayerId;
 
-    let title = '';
-    let lastVerse = '';
-    if (status.currentChunk === 0) { // on first chunk, there is nothing in the database
+    let title = null;
+    let lastVerse = null;
+    if (status.currentChunk !== 0) { // on first chunk, there is nothing in the database
       title = await this.persistenceApi.getVerseText(gameId, readFromPlayerId, 0);
       lastVerse = await this.persistenceApi.getVerseText(gameId, readFromPlayerId, 2 * status.currentChunk - 1);
     }
