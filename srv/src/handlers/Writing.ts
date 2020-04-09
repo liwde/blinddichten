@@ -37,7 +37,7 @@ export class Writing {
       this.persistenceApi.getPlayersByGame(gameId)
     ]);
 
-    const currentRound = Math.min(rounds, Math.floor(currentChunk / players.length)); // max `rounds`, as otherwise the last chunk finishing chunk would be in `rounds+1`
+    const currentRound = Math.min(rounds - 1, Math.floor(currentChunk / players.length)); // max `rounds - 1`, as otherwise the last chunk finishing chunk would be in `rounds+1`
     const totalChunks = rounds * players.length + 1; // +1, as each player finishes his/her poem
     const isLastChunk = rounds * players.length === currentChunk; // no +1 needed, as every player finishes his/her poem
     const isFirstChunk = currentChunk === 0;
@@ -48,6 +48,9 @@ export class Writing {
   private async sendWritingNext(gameId: string, privatePlayerId: string, ws: WebSocket, dbPlayers?: Player[], playersForExternal?: any, status?: any) {
     if (!dbPlayers) {
       dbPlayers = await this.persistenceApi.getPlayersByGame(gameId); // in db order
+    }
+    if (!playersForExternal) {
+      playersForExternal = await this.gamePhaseHandler.getPlayersForExternal(gameId);
     }
     if (!status) {
       status = await this.getWritingStatus(gameId);
@@ -129,6 +132,7 @@ export class Writing {
 
     if (players.every(p => p.ready)) {
       if (status.isLastChunk) {
+        await this.gamePhaseHandler.switchToPhase(GamePhases.VIEWING, player.gameId);
         const poems = await this.getAllPoems(player.gameId);
         const wcMsg: WritingCompletedMessage = {
           type: Events.WRITING_COMPLETED,

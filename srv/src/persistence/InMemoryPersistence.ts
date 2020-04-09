@@ -9,7 +9,7 @@ import { Verse } from "./entities/Verse";
 export class InMemoryPersistence implements PersistenceApi {
   private games: Map<string, Game> = new Map();
   private players: Map<string, Player> = new Map();
-  private verses: Map<{ gameId: string, privatePlayerId: string, verseNo: number}, Verse> = new Map();
+  private verses: Map<string, Verse> = new Map();
 
   public async createGame(wsPlayer: WsPlayer) {
     if (this.games.get(wsPlayer.gameId)) {
@@ -125,7 +125,7 @@ export class InMemoryPersistence implements PersistenceApi {
   }
 
   public async addVerse(gameId: string, privatePlayerId: string, verseNo: number, text: string) {
-    const key = { gameId, privatePlayerId, verseNo };
+    const key = gameId + privatePlayerId + verseNo ;
     const verse = this.verses.get(key);
     if (verse) {
       verse.text = text;
@@ -135,7 +135,7 @@ export class InMemoryPersistence implements PersistenceApi {
   }
 
   public async getVerseText(gameId: string, privatePlayerId: string, verseNo: number) {
-    const key = { gameId, privatePlayerId, verseNo };
+    const key = gameId + privatePlayerId + verseNo ;
     const verse = this.verses.get(key);
     if (!verse) {
       throw new Error('Verse doesn\'t exist');
@@ -150,7 +150,6 @@ export class InMemoryPersistence implements PersistenceApi {
         verses.push(verse);
       }
     });
-    // TODO: might be the wrong way around, I never know with these sorters...
-    return verses.sort((v1, v2) => v2.verseNo - v1.verseNo).map(v => v.text);
+    return verses.sort((v1, v2) => v1.verseNo - v2.verseNo).map(v => v.text);
   }
 }
