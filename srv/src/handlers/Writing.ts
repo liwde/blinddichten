@@ -40,8 +40,9 @@ export class Writing {
     const currentRound = Math.min(rounds, Math.floor(currentChunk / players.length)); // max `rounds`, as otherwise the last chunk finishing chunk would be in `rounds+1`
     const totalChunks = rounds * players.length + 1; // +1, as each player finishes his/her poem
     const isLastChunk = rounds * players.length === currentChunk; // no +1 needed, as every player finishes his/her poem
+    const isFirstChunk = currentChunk === 0;
 
-    return { currentRound, totalRounds: rounds, currentChunk, totalChunks, isLastChunk };
+    return { currentRound, totalRounds: rounds, currentChunk, totalChunks, isFirstChunk, isLastChunk };
   }
 
   private async sendWritingNext(gameId: string, privatePlayerId: string, ws: WebSocket, dbPlayers?: Player[], playersForExternal?: any, status?: any) {
@@ -53,6 +54,10 @@ export class Writing {
     }
 
     const selfOffset = dbPlayers.findIndex(p => p.privatePlayerId === privatePlayerId);
+    if (selfOffset === -1) {
+      console.warn('Didn\'t find', privatePlayerId, 'in', dbPlayers);
+      return;
+    }
     const accessIndex = (selfOffset + status.currentChunk) % dbPlayers.length;
     const readFromPlayerId = dbPlayers[accessIndex].privatePlayerId;
 

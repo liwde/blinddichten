@@ -183,9 +183,9 @@ export class WsServer {
       handlerList.reduce(async (previousHandlerResult: Promise<UnpromisedWsHandlerFnReturn>, handler: wsHandlerFn) => {
         const res = await previousHandlerResult;
         if (res.skip === true) {
-          return previousHandlerResult;
+          return res;
         }
-        return handler(res.ws, res.msg, res.player) || previousHandlerResult;
+        return (await handler(res.ws, res.msg, res.player)) || res;
       }, Promise.resolve({ ws, msg, player }));
     } else {
       this.sendMessage(ws, {
@@ -215,7 +215,11 @@ export class WsServer {
    * @param msg Message
    */
   public sendMessage<T extends ServerMessage>(ws: WebSocket, msg: T): void {
-    ws.send(JSON.stringify(msg));
+    try {
+      ws.send(JSON.stringify(msg));
+    } catch(error) {
+      console.error(error);
+    }
   }
 
   /**
