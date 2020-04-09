@@ -5,6 +5,7 @@
   import debounce from '../util/debounce';
   import { onDestroy } from 'svelte';
   import PlayerList from '../controls/PlayerList.svelte';
+  import LockingButton from '../controls/LockingButton.svelte';
 
   let players = [];
   let rounds;
@@ -42,9 +43,8 @@
 
   function readyLobby() {
     if (!name) {
-      debugger;
+      window.localStorage.setItem('playerName', name);
     }
-    window.localStorage.setItem('playerName', name);
     wsHandler.sendMessage({ type: 'readyLobby' });
   }
   function unreadyLobby() {
@@ -59,11 +59,7 @@
     Rundenzahl: <input disabled="{!owner}" type="number" value="{rounds}" on:keyup="{editRoundsDebounced}" on:change="{editRounds}" />
   </settings>
   <PlayerList bind:players bind:publicPlayerId on:editName="{editName}" />
-  {#if ready}
-    <button on:click="{unreadyLobby}">Ändern</button>
-  {:else}
-    <button on:click="{readyLobby}">Fertig</button>
-  {/if}
+  <LockingButton on:lock="{readyLobby}" on:unlock="{unreadyLobby}" bind:isLocked="{ready}" />
 </main>
 
 <style>

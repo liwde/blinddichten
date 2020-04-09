@@ -2,16 +2,7 @@
   export let players;
   export let publicPlayerId;
 
-  import debounce from '../util/debounce';
-  import { createEventDispatcher } from 'svelte';
   import LoadingIndicator from './LoadingIndicator.svelte';
-
-  const dispatch = createEventDispatcher();
-
-  function editName(event) {
-    dispatch('editName', event.target.value);
-  }
-  const editNameDebounced = debounce(editName, 1000);
 </script>
 
 <players>
@@ -20,11 +11,7 @@
     <ol>
       {#each players as player}
         <li class:ready="{player.ready}" class:me="{player.publicPlayerId === publicPlayerId}" class:owner="{player.isOwner}">
-          {#if player.publicPlayerId === publicPlayerId && !player.ready}
-            <input type="text" value="{player.name}" on:keyup="{editNameDebounced}" on:change="{editName}" />
-          {:else}
             {player.name}
-          {/if}
         </li>
       {/each}
     </ol>

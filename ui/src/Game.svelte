@@ -45,9 +45,9 @@
 </script>
 
 {#if gamePhase === 'lobby'}
-  <Lobby bind:wsHandler="{wsHandler}" bind:publicPlayerId="{publicPlayerId}" />
+  <Lobby bind:wsHandler="{wsHandler}" bind:publicPlayerId />
 {:else if gamePhase === 'writing'}
-  <Writing bind:wsHandler="{wsHandler}" />
+  <Writing bind:wsHandler="{wsHandler}" bind:publicPlayerId />
 {:else}
   <Viewing bind:wsHandler="{wsHandler}" />
 {/if}
