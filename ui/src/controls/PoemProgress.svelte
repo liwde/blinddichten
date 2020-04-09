@@ -18,10 +18,10 @@
   {#if status}
     <div class="row">
       <div class="progress margin-bottom">
-        <div class="bar secondary w-{percentRounds}">Runde {status.currentRound + 1}/{status.totalRounds}</div>
+        <div class="bar success w-{percentChunks}">Verspaar {status.currentChunk + 1}/{status.totalChunks}</div>
       </div>
       <div class="progress margin-bottom">
-        <div class="bar success w-{percentChunks}">Verspaar {status.currentChunk + 1}/{status.totalChunks}</div>
+        <div class="bar secondary w-{percentRounds}">Runde {status.currentRound + 1}/{status.totalRounds}</div>
       </div>
     </div>
   {:else}
