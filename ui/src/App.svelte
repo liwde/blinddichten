@@ -6,6 +6,7 @@
   import { onDestroy } from 'svelte';
   import { fly, fade } from 'svelte/transition';
   import errorList from './util/errorList';
+  import { removeGame } from './util/lastGames';
 
   let gameId, privatePlayerId, publicPlayerId, gamePhase;
   let waitingForGameCreation = false;
@@ -36,6 +37,7 @@
   function errorOccurred(msg) {
     const code = msg.msg || msg.detail;
     if (!errorList[code].recoverable) {
+      removeGame(gameId);
       gameId = null;
       location.hash = '';
     } else {

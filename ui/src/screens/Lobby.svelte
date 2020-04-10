@@ -19,8 +19,10 @@
   function lobbyUpdated(msg) {
     players = msg.players;
     rounds = msg.settings.rounds;
-    ready = players.find(p => p.publicPlayerId === publicPlayerId).ready;
-    owner = players.find(p => p.publicPlayerId === publicPlayerId).isOwner;
+    const me = players.find(p => p.publicPlayerId === publicPlayerId)
+    ready = me.ready;
+    owner = me.isOwner;
+    name = me.name;
   }
   wsHandler.on('lobbyUpdated', lobbyUpdated);
 

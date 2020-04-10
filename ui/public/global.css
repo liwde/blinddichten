@@ -8,6 +8,11 @@ app h2 {
   margin-bottom: .3em;
 }
 
+app h4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 app .card .card-body h3.card-title {
   margin-bottom: 0;
 }

@@ -17,7 +17,7 @@
               👑
             {/if}
             {#if player.ready}
-              <span class="badge success" transition:fade>ready</span>
+              <span class="badge success" transition:fade>fertig</span>
             {/if}
         </li>
       {/each}

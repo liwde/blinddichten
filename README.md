@@ -34,6 +34,6 @@ This project is hot off the press, the main building blocks developed in under a
 - **Add non-essential features.** I'll list the ones I already have in mind:
   - a static page to view and print all poems
   - a "start new game" button on the Viewing screen -- one players clicks it, all players get a notification to join the new game
-  - a history of previous games at the Home screen, directly taking you to the static page with all the poems to enjoy them later, from the game ids stored in the browser's `localStorage`
+  - ~~a history of previous games at the Home screen, directly taking you to the static page with all the poems to enjoy them later, from the game ids stored in the browser's `localStorage`~~
 - **Fix bugs.** I'll list some known ones:
-  - the player name will be stored in the browser's `localStorage` so it can be recovered on new games. Sometimes, it falls back to `undefined`, and I haven't found out when and why.
+  - ~~the player name will be stored in the browser's `localStorage` so it can be recovered on new games. Sometimes, it falls back to `undefined`, and I haven't found out when and why.~~

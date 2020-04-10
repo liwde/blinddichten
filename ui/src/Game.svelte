@@ -9,6 +9,7 @@
   import Viewing from './screens/Viewing.svelte';
   import LoadingIndicator from './controls/LoadingIndicator.svelte';
   import { onDestroy } from 'svelte';
+  import { addNewGame, finishGame } from './util/lastGames';
 
   let poems;
 
@@ -34,12 +35,14 @@
 
   function lobbyCompleted(msg) {
     gamePhase = 'writing';
+    addNewGame(gameId);
   }
   wsHandler.on('lobbyCompleted', lobbyCompleted);
 
   function writingCompleted(msg) {
     poems = msg.poems;
     gamePhase = 'viewing';
+    finishGame(gameId);
   }
   wsHandler.on('writingCompleted', writingCompleted);
 

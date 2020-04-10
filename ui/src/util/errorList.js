@@ -13,7 +13,7 @@ const errorList = {
     recoverable: true,
   },
   'nothingEntered': {
-    text: 'Du solltest vielleicht etwas eingeben...',
+    text: 'Du solltest vielleicht etwas eingeben…',
     recoverable: true
   },
   'nextGameAlreadyStarted': {
