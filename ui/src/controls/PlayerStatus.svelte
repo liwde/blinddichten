@@ -3,6 +3,7 @@
   export let publicPlayerId;
 
   import LoadingIndicator from './LoadingIndicator.svelte';
+  import { fade } from 'svelte/transition';
 </script>
 
 <players>
@@ -12,8 +13,11 @@
       {#each players as player}
         <li class:ready="{player.ready}" class:me="{player.publicPlayerId === publicPlayerId}" class:owner="{player.isOwner}">
             {player.name}
+            {#if player.isOwner}
+              👑
+            {/if}
             {#if player.ready}
-              <span class="badge success">ready</span>
+              <span class="badge success" transition:fade>ready</span>
             {/if}
         </li>
       {/each}
@@ -24,7 +28,4 @@
 </players>
 
 <style>
-  li.owner::after {
-    content: " 👑"
-  }
 </style>

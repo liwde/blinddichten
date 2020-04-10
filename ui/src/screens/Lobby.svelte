@@ -60,7 +60,7 @@
       <h4>Einstellungen</h4>
       <div class="form-group">
         <label for="roundsInput">Rundenzahl</label>
-        <input class="input-block" id="roundsInput" disabled="{!owner}" type="number" value="{rounds}" on:keyup="{editRoundsDebounced}" on:change="{editRounds}" />
+        <input class="input-block" id="roundsInput" disabled="{!owner || ready}" type="number" value="{rounds}" on:keyup="{editRoundsDebounced}" on:change="{editRounds}" />
       </div>
     </div>
   </settings>

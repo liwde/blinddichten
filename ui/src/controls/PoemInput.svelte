@@ -12,6 +12,7 @@
 
   import LockableInput from './LockableInput.svelte';
   import LockingButton from './LockingButton.svelte';
+  import { fly } from 'svelte/transition';
 
   let lastVerseNo = 2 * chunk + 1;
   let verseOneNo = 2 * chunk + 2;
@@ -23,15 +24,15 @@
   }
 </script>
 
-<poem class="card">
+<poem class="card" in:fly="{{x: 500, duration: 800, delay: 800}}" out:fly="{{x: -500, duration: 800}}">
   <div class="card-body">
     {#if chunk === 0}
-      <h4><LockableInput isLocked="{isLocked}" bind:value="{verseOne}" placeholder="Titel" /></h4>
+      <h3 class="card-title"><LockableInput isLocked="{isLocked}" bind:value="{verseOne}" placeholder="Titel" /></h3>
       <ol start="1">
         <li><LockableInput isLocked="{isLocked}" bind:value="{verseTwo}" placeholder="Vers 1" /></li>
       </ol>
     {:else}
-      <h4>{title}</h4>
+      <h3 class="card-title">{title}</h3>
       {#if chunk === 2}
       <hr/>
       {/if}

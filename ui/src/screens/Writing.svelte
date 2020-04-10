@@ -2,8 +2,7 @@
   export let wsHandler;
   export let publicPlayerId;
 
-  let title;
-  let lastVerse;
+  let poems = []; // array for animation
 
   let players;
   let status;
@@ -22,8 +21,11 @@
   import { fly } from 'svelte/transition';
 
   function writingNext(msg) {
-    title = msg.title;
-    lastVerse = msg.lastVerse;
+    poems = [{
+      title: msg.title,
+      lastVerse: msg.lastVerse,
+      chunk: msg.status.currentChunk
+    }];
     verseOne = '';
     verseTwo = '';
     writingUpdated(msg); // to handle players and status
@@ -53,11 +55,11 @@
 
 <main in:fly="{{x: 500, delay: 400}}" out:fly="{{x: -500}}">
   <h1>Schreiben</h1>
-  {#if status}
+  {#each poems as { title, lastVerse, chunk} (chunk)}
     <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" isLocked="{ready}" on:lock="{readyWriting}" on:unlock="{unreadyWriting}" />
   {:else}
     <LoadingIndicator />
-  {/if}
+  {/each}
   <div class="row flex-center">
     <div class="sm-12 md-6 lg-6 col"><PlayerStatus players="{players}" publicPlayerId="{publicPlayerId}" /></div>
     <div class="sm-12 md-6 lg-6 col"><PoemProgress status="{status}" /></div>

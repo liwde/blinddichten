@@ -8,8 +8,13 @@
 
   const dispatch = createEventDispatcher();
 
+  let lastName;
+
   function editName(event) {
-    dispatch('editName', event.target.value);
+    if (lastName !== event.target.value) {
+      lastName = event.target.value;
+      dispatch('editName', event.target.value);
+    }
   }
   const editNameDebounced = debounce(editName, 1000);
 </script>
