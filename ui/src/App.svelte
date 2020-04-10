@@ -5,6 +5,7 @@
   import Home from './screens/Home.svelte';
   import { onDestroy } from 'svelte';
   import { fly, fade } from 'svelte/transition';
+  import errorList from './util/errorList';
 
   let gameId, privatePlayerId, publicPlayerId, gamePhase;
   let waitingForGameCreation = false;
@@ -33,13 +34,21 @@
   wsHandler.on('gameEntered', gameEntered);
 
   function errorOccurred(msg) {
-    //if (msg.msg === 'gameNotFound') {
-    // TODO: We need to find a way when errors can be recovered by refreshing the state -- and then do this.
-    // For now, we just always reset and go home
-    gameId = null;
-    location.hash = '';
-    errors = [{ code: msg.msg, id: (new Date()).getTime() }, ...errors];
-    //}
+    if (!errorList[msg.msg].recoverable) {
+      gameId = null;
+      location.hash = '';
+    } else {
+        wsHandler.sendMessage({ type: 'recoverSession', gameId, privatePlayerId, publicPlayerId });
+    }
+    if (!errorList[msg.msg].silent) {
+      errors = [
+        {
+          code: msg.msg,
+          text: errorList[msg.msg].text,
+          id: (new Date()).getTime()
+        },
+      ...errors];
+    }
   }
   wsHandler.on('errorOccurred', errorOccurred);
 
@@ -62,7 +71,7 @@
     }
   }
 
-  window.onhashchange = hashChanged
+  window.addEventListener('hashchange', hashChanged, false);
 
   onDestroy(() => {
     wsHandler.off('gameEntered', gameEntered);
@@ -100,7 +109,7 @@
     <errors>
       {#each errors as error (error.id)}
         <div class="alert alert-danger dismissible" in:fly="{{y: -500}}" out:fade>
-          {error.code}
+          {error.text}
           <label class="btn-close" on:click="{() => dismissError(error.id)}">X</label>
         </div>
       {/each}
