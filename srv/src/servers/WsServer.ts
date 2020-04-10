@@ -37,7 +37,7 @@ export class WsServer {
     this.on(Actions.ENTER_GAME, this.onEnterGame.bind(this));
     this.on(Actions.DISCONNECT, this.onDisconnect.bind(this));
     this.on(Actions.RECOVER_SESSION, this.onRecoverSession.bind(this));
-    this.on(Actions.SEND_HEARTBEAT, () => {});
+    this.on(Actions.SEND_HEARTBEAT, () => { /* noop */});
 
     // check heartbeat
     const heartbeatInterval = setInterval(this.checkHeartbeat.bind(this), HEARTBEAT_INTERVAL);
