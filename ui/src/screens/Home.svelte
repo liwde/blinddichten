@@ -21,8 +21,18 @@
   <div>
     <h1><img src="img/logo.svg" alt="blinddichten" class="no-responsive no-border" /></h1>
     <p>
-      Irgendein Willkommenstext.
-      Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+      <em>blinddichten</em> ist ein lustiges Partyspiel für Menschen, die kreativ veranlagt sind oder Poetry Slams ganz fetzig finden.
+      Im Laufe eines Spiels schreiben alle Spieler gemeinsam pro Teilnehmer ein Gedicht – Zeile für Zeile:
+    </p>
+    <ol class="larger">
+      <li><span>Jeder Spieler erhält einen Zettel und schreibt darauf den <em>Titel</em> für das Gedichts sowie eine <em>erste Zeile</em>.</span></li>
+      <li><span>Danach werden die Zettel im Kreis einen Platz <em>weitergereicht</em>.</span></li>
+      <li><span>Der nächste Spieler ergänzt einen <em>reimenden zweiten</em> sowie einen eigenständigen <em>dritten Vers</em>.</span></li>
+      <li><span>Das Weitergeben wird wiederholt, bis der jeder Zettel nach einer oder mehreren Runden wieder <em>beim Ursprungsautor</em> angekommen ist, der die <em>Schlusszeile reimt</em>.</span></li>
+      <li><span><em>Tragt</em> euch die fertigen Gedichte <em>gegenseitig vor</em>!</span></li>
+    </ol>
+    <p>
+      Mit dieser Website ist es möglich, das Spiel digital zum Beispiel während einer Videokonferenz mit Freunden zu spielen. Viel Spaß dabei!
     </p>
   </div>
   <div class="row flex-center flex-middle">
@@ -73,6 +83,20 @@
 
   h1 img {
     width: 100%;
+  }
+
+  @media(min-width: 600px) {
+    ol.larger li {
+      margin: 0 0 0 1em;
+      font-size: 40px;
+      font-weight: bold;
+      line-height: 1;
+      margin-bottom: .2em;
+    }
+    ol.larger li span {
+      font-size: 25px;
+      font-weight: normal;
+    }
   }
 
   table {
