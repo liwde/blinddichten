@@ -34,17 +34,18 @@
   wsHandler.on('gameEntered', gameEntered);
 
   function errorOccurred(msg) {
-    if (!errorList[msg.msg].recoverable) {
+    const code = msg.msg || msg.detail;
+    if (!errorList[code].recoverable) {
       gameId = null;
       location.hash = '';
     } else {
         wsHandler.sendMessage({ type: 'recoverSession', gameId, privatePlayerId, publicPlayerId });
     }
-    if (!errorList[msg.msg].silent) {
+    if (!errorList[code].silent) {
       errors = [
         {
-          code: msg.msg,
-          text: errorList[msg.msg].text,
+          code,
+          text: errorList[code].text,
           id: (new Date()).getTime()
         },
       ...errors];
@@ -116,7 +117,7 @@
     </errors>
   {/if}
   {#if gameId}
-    <Game wsHandler="{wsHandler}" gameId="{gameId}" publicPlayerId="{publicPlayerId}" bind:gamePhase />
+    <Game wsHandler="{wsHandler}" gameId="{gameId}" publicPlayerId="{publicPlayerId}" bind:gamePhase on:errorOccurred="{errorOccurred}" />
   {:else}
     <Home on:createGame="{createGame}" createDisabled="{waitingForGameCreation}" />
   {/if}

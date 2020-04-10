@@ -3,10 +3,12 @@
   export let publicPlayerId;
 
   import debounce from '../util/debounce';
-  import { onDestroy } from 'svelte';
+  import { onDestroy, createEventDispatcher } from 'svelte';
   import PlayerList from '../controls/PlayerList.svelte';
   import LockingButton from '../controls/LockingButton.svelte';
   import { fly } from 'svelte/transition';
+
+  const dispatch = createEventDispatcher();
 
   let players = [];
   let rounds;
@@ -43,10 +45,12 @@
   const editRoundsDebounced = debounce(editRounds, 1000);
 
   function readyLobby() {
-    if (!name) {
+    if (name) {
       window.localStorage.setItem('playerName', name);
+      wsHandler.sendMessage({ type: 'readyLobby' });
+    } else {
+      dispatch('errorOccurred', 'nothingEntered');
     }
-    wsHandler.sendMessage({ type: 'readyLobby' });
   }
   function unreadyLobby() {
     wsHandler.sendMessage({ type: 'unreadyLobby' });

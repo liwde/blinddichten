@@ -12,13 +12,15 @@
 
   let ready = false;
 
-  import { onDestroy } from 'svelte';
+  import { onDestroy, createEventDispatcher } from 'svelte';
   import LockingButton from '../controls/LockingButton.svelte';
   import LoadingIndicator from '../controls/LoadingIndicator.svelte';
   import PlayerStatus from '../controls/PlayerStatus.svelte';
   import PoemInput from '../controls/PoemInput.svelte';
   import PoemProgress from '../controls/PoemProgress.svelte';
   import { fly } from 'svelte/transition';
+
+  const dispatch = createEventDispatcher();
 
   function writingNext(msg) {
     poems = [{
@@ -45,7 +47,11 @@
   });
 
   function readyWriting() {
-    wsHandler.sendMessage({ type: 'readyWriting', verse1: verseOne, verse2: verseTwo });
+    if (verseOne && (verseTwo || status.isLastChunk)) {
+      wsHandler.sendMessage({ type: 'readyWriting', verse1: verseOne, verse2: verseTwo });
+    } else {
+      dispatch('errorOccurred', 'nothingEntered');
+    }
   }
 
   function unreadyWriting() {

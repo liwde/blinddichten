@@ -53,11 +53,11 @@
 </script>
 
 {#if gamePhase === 'lobby'}
-  <Lobby wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" />
+  <Lobby wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" on:errorOccurred />
 {:else if gamePhase === 'writing'}
-  <Writing wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" />
+  <Writing wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" on:errorOccurred />
 {:else if gamePhase === 'viewing'}
-  <Viewing poems="{poems}" />
+  <Viewing poems="{poems}" on:errorOccurred />
 {:else}
   <LoadingIndicator />
 {/if}

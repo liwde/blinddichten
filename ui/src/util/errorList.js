@@ -12,6 +12,10 @@ const errorList = {
     text: 'Du bist in der falschen Spielphase für diese Aktion.',
     recoverable: true,
   },
+  'nothingEntered': {
+    text: 'Du solltest vielleicht etwas eingeben...',
+    recoverable: true
+  },
   'nextGameAlreadyStarted': {
     silent: true
   }
