@@ -6,6 +6,7 @@
   import { onDestroy } from 'svelte';
   import PlayerList from '../controls/PlayerList.svelte';
   import LockingButton from '../controls/LockingButton.svelte';
+  import { fly } from 'svelte/transition';
 
   let players = [];
   let rounds;
@@ -52,7 +53,7 @@
   }
 </script>
 
-<main>
+<main in:fly="{{x: 500, delay: 400}}" out:fly="{{x: -500}}">
   <h1>Lobby</h1>
   <settings class="card">
     <div class="card-body">

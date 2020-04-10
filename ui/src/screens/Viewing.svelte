@@ -2,9 +2,10 @@
   export let poems;
 
   import LoadingIndicator from '../controls/LoadingIndicator.svelte';
+  import { fly } from 'svelte/transition';
 </script>
 
-<main>
+<main in:fly="{{x: 500, delay: 400}}" out:fly="{{x: 500}}">
   <h1>Alle Gedichte</h1>
   {#if poems}
     {#each poems as poem}

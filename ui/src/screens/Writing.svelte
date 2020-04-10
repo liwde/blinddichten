@@ -19,6 +19,7 @@
   import PlayerStatus from '../controls/PlayerStatus.svelte';
   import PoemInput from '../controls/PoemInput.svelte';
   import PoemProgress from '../controls/PoemProgress.svelte';
+  import { fly } from 'svelte/transition';
 
   function writingNext(msg) {
     title = msg.title;
@@ -50,7 +51,7 @@
   }
 </script>
 
-<main>
+<main in:fly="{{x: 500, delay: 400}}" out:fly="{{x: -500}}">
   <h1>Schreiben</h1>
   {#if status}
     <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" isLocked="{ready}" on:lock="{readyWriting}" on:unlock="{unreadyWriting}" />

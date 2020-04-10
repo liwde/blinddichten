@@ -1,11 +1,12 @@
 <script>
   export let createDisabled = true;
   import { createEventDispatcher } from 'svelte';
+  import { fly } from 'svelte/transition';
 
   const dispatch = createEventDispatcher();
 </script>
 
-<main>
+<main in:fly="{{x: -500}}" out:fly="{{x: -500}}">
   <h1>blinddichten</h1>
   <p>
     Irgendein Willkommenstext.
