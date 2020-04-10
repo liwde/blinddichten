@@ -2,8 +2,8 @@ import App from './App.svelte';
 import WebSocketHandler from './WebSocketHandler.js';
 
 let host = window.location.host;
-if (host === 'localhost') {
-  host = `ws://${host}:5001`;
+if (host === 'localhost:5000') {
+  host = `ws://${host.replace(':5000', ':5001')}`;
 } else {
   host = `wss://${host}`;
 }

@@ -31,7 +31,7 @@
             <span class="align">
               {player.name}
               {#if player.ready}
-                <span class="badge success">ready</span>
+                <span class="badge success">fertig</span>
               {/if}
             </span>
           {/if}

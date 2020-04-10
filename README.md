@@ -37,3 +37,13 @@ This project is hot off the press, the main building blocks developed in under a
   - ~~a history of previous games at the Home screen, directly taking you to the static page with all the poems to enjoy them later, from the game ids stored in the browser's `localStorage`~~
 - **Fix bugs.** I'll list some known ones:
   - ~~the player name will be stored in the browser's `localStorage` so it can be recovered on new games. Sometimes, it falls back to `undefined`, and I haven't found out when and why.~~
+
+## Screenshots
+
+![Home](img/home.png)
+
+![lobby](img/lobby.png)
+
+![writing](img/writing.png)
+
+![viewing](img/viewing.png)
