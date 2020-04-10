@@ -85,7 +85,7 @@
 
 <nav class="border fixed split-nav">
   <div class="nav-brand">
-    <h3><a href="/"><img src="logo_header.svg" height="40" alt="blinddichten" class="no-responsive no-border" /></a></h3>
+    <h3><a href="/"><img src="img/logo_header.svg" height="40" alt="blinddichten" class="no-responsive no-border" /></a></h3>
   </div>
   <div class="collapsible">
     <input id="collapsible1" type="checkbox" name="collapsible1">

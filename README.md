@@ -21,7 +21,7 @@ The database is accessed through a simple API that can be implemented by differe
 
 The frontend is a webapp written with [Svelte](https://svelte.dev/). There are `controls` to handle generic data display, and `screens` that control the whole UI layout, as well as a `Game` component handling anything inside a running game, `WebSocketHandler` abstraction over WebSockets and the `App` component bringing it all together.
 
-The most beautiful UX is created by the awesome [PaperCSS](https://www.getpapercss.com/) library.
+The most beautiful UX is created by the awesome [PaperCSS](https://www.getpapercss.com/) library. The fonts used are [Neucha](https://fonts.google.com/specimen/Neucha) and [Patrich Hand SC](https://fonts.google.com/specimen/Patrick+Hand+SC). The logo is home-made, but the Android Icon was generated with [Android Asset Studio](https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html).
 
 - development: `npm run dev`
 - build: `npm run build`
