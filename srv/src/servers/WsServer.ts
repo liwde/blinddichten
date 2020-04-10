@@ -219,6 +219,10 @@ export class WsServer {
       ws.send(JSON.stringify(msg));
     } catch(error) {
       // We lost a client. He might reconnect, though, at which point we have a valid session again
+      // However, we should do some cleanup
+      if (getWsPlayer(ws)) {
+        this.players.delete(getWsPlayer(ws).privatePlayerId);
+      }
     }
   }
 
