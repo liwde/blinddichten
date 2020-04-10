@@ -1,4 +1,4 @@
-# blinddichten
+![blinddichten](ui/public/img/logo.svg)
 
 _blinddichten_ is a fun party game in which all players gather in a round to collectively write poems.
 
