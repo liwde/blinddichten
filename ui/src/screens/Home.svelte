@@ -28,6 +28,7 @@
       <li><span>Jeder Spieler erhält einen Zettel und schreibt darauf den <em>Titel</em> für das Gedichts sowie eine <em>erste Zeile</em>.</span></li>
       <li><span>Danach werden die Zettel im Kreis einen Platz <em>weitergereicht</em>.</span></li>
       <li><span>Der nächste Spieler ergänzt einen <em>reimenden zweiten</em> sowie einen eigenständigen <em>dritten Vers</em>.</span></li>
+      <li><span>Der Zettel wird so <em>gefaltet</em>, dass <em>nur der Titel und der letzte Vers</em> sichtbar sind.</span></li>
       <li><span>Das Weitergeben wird wiederholt, bis der jeder Zettel nach einer oder mehreren Runden wieder <em>beim Ursprungsautor</em> angekommen ist, der die <em>Schlusszeile reimt</em>.</span></li>
       <li><span><em>Tragt</em> euch die fertigen Gedichte <em>gegenseitig vor</em>!</span></li>
     </ol>
