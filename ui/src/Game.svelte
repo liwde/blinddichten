@@ -2,13 +2,14 @@
   export let wsHandler;
   export let gameId;
   export let publicPlayerId;
+  export let gamePhase;
 
   import Lobby from './screens/Lobby.svelte';
   import Writing from './screens/Writing.svelte';
   import Viewing from './screens/Viewing.svelte';
+  import LoadingIndicator from './controls/LoadingIndicator.svelte';
   import { onDestroy } from 'svelte';
 
-  let gamePhase = 'lobby';
   let poems;
 
   function socketRecreated() {
@@ -55,6 +56,8 @@
   <Lobby wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" />
 {:else if gamePhase === 'writing'}
   <Writing wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" />
-{:else}
+{:else if gamePhase === 'viewing'}
   <Viewing poems="{poems}" />
+{:else}
+  <LoadingIndicator />
 {/if}

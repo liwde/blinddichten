@@ -4,9 +4,11 @@
   import Game from './Game.svelte';
   import Home from './screens/Home.svelte';
   import { onDestroy } from 'svelte';
+  import { fly, fade } from 'svelte/transition';
 
-  let gameId, privatePlayerId, publicPlayerId;
+  let gameId, privatePlayerId, publicPlayerId, gamePhase;
   let waitingForGameCreation = false;
+  let errors = [];
 
   function createGame() {
     waitingForGameCreation = true;
@@ -22,10 +24,11 @@
       location.hash = gameId;
     }
     const lastPlayerName = window.localStorage.getItem('playerName');
-    if (lastPlayerName) {
+    if (lastPlayerName && lastPlayerName !== 'undefined') {
       wsHandler.sendMessage({ type: 'changeLobby', name: lastPlayerName });
     }
     waitingForGameCreation = false;
+    gamePhase = 'lobby';
   }
   wsHandler.on('gameEntered', gameEntered);
 
@@ -35,10 +38,14 @@
     // For now, we just always reset and go home
     gameId = null;
     location.hash = '';
-    alert(msg.msg);
+    errors = [{ code: msg.msg, id: (new Date()).getTime() }, ...errors];
     //}
   }
   wsHandler.on('errorOccurred', errorOccurred);
+
+  function dismissError(id) {
+    errors = errors.filter(e => e.id !== id);
+  }
 
   function hashChanged() {
     if (location.hash && location.hash.length > 1 && gameId !== location.hash.substr(1)) {
@@ -89,8 +96,18 @@
 </nav>
 
 <app>
+  {#if errors && errors.length > 0}
+    <errors>
+      {#each errors as error (error.id)}
+        <div class="alert alert-danger dismissible" in:fly="{{y: -500}}" out:fade>
+          {error.code}
+          <label class="btn-close" on:click="{() => dismissError(error.id)}">X</label>
+        </div>
+      {/each}
+    </errors>
+  {/if}
   {#if gameId}
-    <Game wsHandler="{wsHandler}" gameId="{gameId}" publicPlayerId="{publicPlayerId}" />
+    <Game wsHandler="{wsHandler}" gameId="{gameId}" publicPlayerId="{publicPlayerId}" bind:gamePhase />
   {:else}
     <Home on:createGame="{createGame}" createDisabled="{waitingForGameCreation}" />
   {/if}
@@ -100,5 +117,10 @@
   app {
     display: block;
     padding: 1em;
+  }
+  errors {
+    display: block;
+    margin: 4em auto 0 auto;
+    max-width: 600px;
   }
 </style>
