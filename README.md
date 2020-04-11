@@ -4,7 +4,7 @@ _blinddichten_ is a fun party game in which all players gather in a round to col
 
 Each player gets a pen and a sheet of paper and writes down the title and a first verse. It's useful to decide on a common meter for the verses – iambic pentameter or tetrameter seem to work quite well. Then, each sheet is passed on to the next player, who adds a rhyming second verse, as well as a completely new third one. After that, the paper is folded so that only the title and the last verse are visible for the next player, who once again adds a rhyming verse and a new one. This is continued until the paper reaches the original author, who adds a final verse to finish off the poem. Finally, poems are read to each other in the most poetical manner.
 
-## binddichten – the webapp
+## blinddichten – the webapp
 
 With this project, it is possible to play _blinddichten_ remotely, e.g. during a video call with friends. Digitize all the things! The project consists of two parts, communicating with each other via a well-defined set of messages.
 
