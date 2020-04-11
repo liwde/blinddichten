@@ -17,13 +17,13 @@
   import { fly } from 'svelte/transition';
   import titleGenerator from '../titlegen';
 
-  let lastVerseNo = 2 * chunk + 1;
-  let verseOneNo = 2 * chunk + 2;
-  let verseTwoNo = 2 * chunk + 3;
+  let lastVerseNo = 2 * chunk - 1;
+  let verseOneNo = 2 * chunk;
+  let verseTwoNo = 2 * chunk + 1;
   $: {
-    lastVerseNo = 2 * chunk + 1;
-    verseOneNo = 2 * chunk + 2;
-    verseTwoNo = 2 * chunk + 3;
+    lastVerseNo = 2 * chunk - 1;
+    verseOneNo = 2 * chunk;
+    verseTwoNo = 2 * chunk + 1;
   }
 
   function makeRandomTitle() {
