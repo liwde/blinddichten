@@ -13,7 +13,6 @@
   let ready = false;
 
   import { onDestroy, createEventDispatcher } from 'svelte';
-  import LockingButton from '../controls/LockingButton.svelte';
   import LoadingIndicator from '../controls/LoadingIndicator.svelte';
   import PlayerStatus from '../controls/PlayerStatus.svelte';
   import PoemInput from '../controls/PoemInput.svelte';
@@ -64,7 +63,7 @@
   <div class="row rolling">
   {#each poems as { title, lastVerse, chunk} (chunk)}
     <div class="col-6"><div class="rolling-content">
-      <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" isLocked="{ready}" on:lock="{readyWriting}" on:unlock="{unreadyWriting}" />
+      <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" isLocked="{ready}" on:lock="{readyWriting}" on:unlock="{unreadyWriting}" players="{players}" publicPlayerId="{publicPlayerId}" />
     </div></div>
   {:else}
     <LoadingIndicator />

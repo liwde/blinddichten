@@ -6,7 +6,7 @@
   import debounce from '../util/debounce';
   import { onDestroy, createEventDispatcher } from 'svelte';
   import PlayerList from '../controls/PlayerList.svelte';
-  import LockingButton from '../controls/LockingButton.svelte';
+  import ReadyButton from '../controls/ReadyButton.svelte';
   import { fly } from 'svelte/transition';
   import { addNewGame } from '../util/lastGames';
 
@@ -21,7 +21,7 @@
   function lobbyUpdated(msg) {
     players = msg.players;
     rounds = msg.settings.rounds;
-    const me = players.find(p => p.publicPlayerId === publicPlayerId)
+    const me = players.find(p => p.publicPlayerId === publicPlayerId);
     ready = me.ready;
     owner = me.isOwner;
     name = me.name;
@@ -79,7 +79,7 @@
     </div>
   </settings>
   <PlayerList players="{players}" publicPlayerId="{publicPlayerId}" on:editName="{editName}" />
-  <LockingButton on:lock="{readyLobby}" on:unlock="{unreadyLobby}" isLocked="{ready}" />
+  <ReadyButton on:lock="{readyLobby}" on:unlock="{unreadyLobby}" players="{players}" publicPlayerId="{publicPlayerId}" lastReadyText="Spiel starten" />
 </main>
 
 <style>

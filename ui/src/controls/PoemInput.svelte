@@ -2,6 +2,8 @@
   export let chunk;
   export let isLastChunk;
   export let isLocked;
+  export let players;
+  export let publicPlayerId;
 
   export let title = "";
   export let lastVerse = "";
@@ -11,7 +13,7 @@
   export let verseTwo = "";
 
   import LockableInput from './LockableInput.svelte';
-  import LockingButton from './LockingButton.svelte';
+  import ReadyButton from './ReadyButton.svelte';
   import { fly } from 'svelte/transition';
   import titleGenerator from '../titlegen';
 
@@ -52,7 +54,7 @@
         {/if}
       </ol>
     {/if}
-    <LockingButton on:lock on:unlock isLocked="{isLocked}" />
+    <ReadyButton on:lock on:unlock players="{players}" publicPlayerId="{publicPlayerId}" lastReadyText="Nächster Zettel" />
   </div>
 </poem>
 
