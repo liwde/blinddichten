@@ -61,11 +61,15 @@
 
 <main in:fly="{{x: 500, delay: 400}}" out:fly="{{x: -500}}">
   <h1>Schreiben</h1>
+  <div class="row rolling">
   {#each poems as { title, lastVerse, chunk} (chunk)}
-    <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" isLocked="{ready}" on:lock="{readyWriting}" on:unlock="{unreadyWriting}" />
+    <div class="col-6"><div class="rolling-content">
+      <PoemInput title="{title}" lastVerse="{lastVerse}" bind:verseOne bind:verseTwo chunk="{status.currentChunk}" isLastChunk="{status.isLastChunk}" isLocked="{ready}" on:lock="{readyWriting}" on:unlock="{unreadyWriting}" />
+    </div></div>
   {:else}
     <LoadingIndicator />
   {/each}
+  </div>
   <div class="row flex-center">
     <div class="sm-12 md-6 lg-6 col"><PlayerStatus players="{players}" publicPlayerId="{publicPlayerId}" /></div>
     <div class="sm-12 md-6 lg-6 col"><PoemProgress status="{status}" /></div>
@@ -75,5 +79,8 @@
 <style>
   main {
     max-width: 800px;
+  }
+  div.rolling-content {
+    width: 200%;
   }
 </style>
