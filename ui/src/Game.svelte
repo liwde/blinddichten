@@ -9,7 +9,7 @@
   import Viewing from './screens/Viewing.svelte';
   import LoadingIndicator from './controls/LoadingIndicator.svelte';
   import { onDestroy } from 'svelte';
-  import { addNewGame, finishGame } from './util/lastGames';
+  import { finishGame } from './util/lastGames';
 
   let poems;
 
@@ -35,7 +35,6 @@
 
   function lobbyCompleted(msg) {
     gamePhase = 'writing';
-    addNewGame(gameId);
   }
   wsHandler.on('lobbyCompleted', lobbyCompleted);
 
@@ -56,7 +55,7 @@
 </script>
 
 {#if gamePhase === 'lobby'}
-  <Lobby wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" on:errorOccurred />
+  <Lobby wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" gameId="{gameId}" on:errorOccurred />
 {:else if gamePhase === 'writing'}
   <Writing wsHandler="{wsHandler}" publicPlayerId="{publicPlayerId}" on:errorOccurred />
 {:else if gamePhase === 'viewing'}

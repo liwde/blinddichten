@@ -13,12 +13,13 @@ export function getLastGames(n) {
   }
 }
 
-export function addNewGame(gameId) {
+export function addNewGame(gameId, players) {
   const games = getLastGames();
   if (!games.find(g => g.gameId === gameId)) {
     games.push({
       gameId: gameId,
       date: new Date(),
+      players,
       finished: false
     })
     window.localStorage.setItem(KEY, JSON.stringify(games));

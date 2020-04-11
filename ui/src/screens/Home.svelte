@@ -2,9 +2,9 @@
   export let createDisabled = true;
   import { createEventDispatcher } from 'svelte';
   import { fly } from 'svelte/transition';
-  import { getLastGames } from '../util/lastGames';
+  import { getLastGames, removeGame } from '../util/lastGames';
 
-  const lastGames = getLastGames(4);
+  let lastGames = getLastGames(4);
 
   function padZeros(num) {
     return ('' + num).padStart(2, '0');
@@ -12,6 +12,19 @@
 
   function formatDate(date) {
     return `${padZeros(date.getDate())}.${padZeros(date.getMonth() + 1)}.${date.getFullYear()} ${padZeros(date.getHours())}:${padZeros(date.getMinutes())}`;
+  }
+
+  function formatPlayers(players) {
+    return players ? players.map(p => p.name).join(', ') : '';
+  }
+
+  function removeAndReload(gameId) {
+    removeGame(gameId);
+    lastGames = getLastGames(4);
+  }
+
+  function gotoGame(gameId) {
+    location.hash = gameId;
   }
 
   const dispatch = createEventDispatcher();
@@ -37,29 +50,33 @@
     </p>
   </div>
   <div class="row flex-center flex-middle">
-    <div class="sm-12 md-6 lg-6 col center">
+    <div class="sm-12 md-4 lg-4 col center">
       <button on:click="{() => dispatch('createGame')}" class="btn-primary" enabled="{!createDisabled}">Neues Spiel starten</button>
     </div>
-    <div class="sm-12 md-6 lg-6 col">
+    <div class="sm-12 md-8 lg-8 col">
       <h4>Letzte 4 Spiele</h4>
       <table>
         <thead>
           <tr>
             <th>#</th>
             <th>Datum</th>
+            <th>Spieler</th>
+            <th>&nbsp;</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
-          {#each lastGames as game, idx}
-            <tr class="linked">
-              <td><a class="rowlink" href="#{game.gameId}">{idx + 1}</a></td>
-              <td>{formatDate(game.date)}<td>
+          {#each lastGames as game, idx (game.gameId)}
+            <tr class="linked" on:click="{gotoGame(game.gameId)}">
+              <td>{idx + 1}</td>
+              <td>{formatDate(game.date)}</td>
+              <td>{formatPlayers(game.players)}</td>
               <td>{#if game.finished}<span class="badge success">fertig</span>{:else}<span class="badge warning">läuft…</span>{/if}</td>
+              <td class="remove" on:click|stopPropagation="{removeAndReload(game.gameId)}" title="Aus der Liste entfernen">X</td>
             </tr>
           {:else}
             <tr>
-              <td colspan="3"><em>Noch kein Spiel gespielt</em></td>
+              <td colspan="5"><em>Noch kein Spiel gespielt</em></td>
             </tr>
           {/each}
         </tbody>
@@ -100,24 +117,13 @@
     }
   }
 
-  table {
-    position: relative;
+  tr.linked {
+    cursor: pointer;
   }
-
-  .rowlink::before {
-    content: "";
-    display: block;
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 1.5em; /* don't forget to set the height! */
-  }
-
-  a.rowlink {
-    background-image: none;
-  }
-
-  tr.linked:hover {
+  tr.linked:hover td {
     opacity: .5;
+  }
+  tr.linked td.remove:hover {
+    opacity: 1;
   }
 </style>

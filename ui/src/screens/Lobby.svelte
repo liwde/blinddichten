@@ -1,12 +1,14 @@
 <script>
   export let wsHandler;
   export let publicPlayerId;
+  export let gameId;
 
   import debounce from '../util/debounce';
   import { onDestroy, createEventDispatcher } from 'svelte';
   import PlayerList from '../controls/PlayerList.svelte';
   import LockingButton from '../controls/LockingButton.svelte';
   import { fly } from 'svelte/transition';
+  import { addNewGame } from '../util/lastGames';
 
   const dispatch = createEventDispatcher();
 
@@ -26,8 +28,14 @@
   }
   wsHandler.on('lobbyUpdated', lobbyUpdated);
 
+  function lobbyCompleted() {
+    addNewGame(gameId, players);
+  }
+  wsHandler.on('lobbyCompleted', lobbyCompleted);
+
   onDestroy(() => {
     wsHandler.off('lobbyUpdated', lobbyUpdated);
+    wsHandler.off('lobbyCompleted', lobbyCompleted);
   });
 
   function editName(event) {
