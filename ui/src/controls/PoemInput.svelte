@@ -54,7 +54,7 @@
         {/if}
       </ol>
     {/if}
-    <ReadyButton on:lock on:unlock players="{players}" publicPlayerId="{publicPlayerId}" lastReadyText="Nächster Zettel" />
+    <ReadyButton on:lock on:unlock players="{players}" publicPlayerId="{publicPlayerId}" lastReadyText="Weiter" />
   </div>
 </poem>
 
