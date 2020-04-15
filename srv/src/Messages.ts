@@ -41,7 +41,9 @@ export enum Errors {
   UNKNOWN_ERROR = 'unknownError',
   UNHANDLED_EVENT = 'unhandledEvent',
   GAME_NOT_FOUND = 'gameNotFound',
+  CANT_ENTER_GAME = 'cantEnterGame',
   WRONG_GAME_PHASE = 'wrongGamePhase',
+  NOT_IN_GAME = 'notInGame',
   NEXT_GAME_ALREADY_STARTED = 'nextGameAlreadyStarted'
 }
 

@@ -179,6 +179,7 @@ export class Writing {
   }
 
   private async onRecoverSession(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
+    // TODO: Check if in Session
     if (await this.gamePhaseHandler.isInPhase(GamePhases.WRITING, player.gameId)) {
       this.sendWritingNext(player.gameId, player.privatePlayerId, ws);
     }

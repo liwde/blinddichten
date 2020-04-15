@@ -1,10 +1,11 @@
 import * as WebSocket from 'ws';
-import { PersistenceApi } from '../persistence/API';
-import { WsServer, PromisedWsHandlerFnReturn } from '../servers/WsServer';
-import { ClientMessage, Actions, Events, LobbyUpdatedMessage, Errors, CloseGameMessage, ChangeLobbyMessage, GameEnteredMessage } from '../Messages';
-import { WsPlayer } from '../servers/WsPlayer';
-import { GamePhaseHandler, GamePhases } from './GamePhases';
 import { synchronizePerGameId } from '../AsyncUtils';
+import { getDefaultPlayerName } from "../getDefaultPlayerName";
+import { Actions, ChangeLobbyMessage, ClientMessage, CloseGameMessage, Errors, Events, GameEnteredMessage, LobbyUpdatedMessage } from '../Messages';
+import { PersistenceApi } from '../persistence/API';
+import { WsPlayer } from '../servers/WsPlayer';
+import { PromisedWsHandlerFnReturn, WsServer } from '../servers/WsServer';
+import { GamePhaseHandler, GamePhases } from './GamePhases';
 
 export class Lobby {
   constructor(private wsServer: WsServer, private persistenceApi: PersistenceApi, private gamePhaseHandler: GamePhaseHandler) {
@@ -52,7 +53,7 @@ export class Lobby {
   @synchronizePerGameId
   private async onCreateGame(ws: WebSocket, msg: ClientMessage, player: WsPlayer): PromisedWsHandlerFnReturn {
     await this.persistenceApi.createGame(player);
-    await this.persistenceApi.addPlayer(player, true);
+    await this.persistenceApi.addPlayer(player, getDefaultPlayerName(), true);
 
     const geMsg: GameEnteredMessage = {
       type: Events.GAME_ENTERED,
@@ -70,11 +71,11 @@ export class Lobby {
     if (!await this.gamePhaseHandler.isInPhase(GamePhases.LOBBY, player.gameId)) {
       this.wsServer.sendMessage(ws, {
         type: Events.ERROR_OCCURRED,
-        msg: Errors.WRONG_GAME_PHASE
+        msg: Errors.CANT_ENTER_GAME
       });
       return;
     }
-    await this.persistenceApi.addPlayer(player);
+    await this.persistenceApi.addPlayer(player, getDefaultPlayerName());
 
     const geMsg: GameEnteredMessage = {
       type: Events.GAME_ENTERED,

@@ -7,7 +7,7 @@ export class Server {
 
   constructor() {
     this.app = express();
-    this.port = parseInt(process.env.SERVER_PORT, 10) || SERVER_PORT;
+    this.port = SERVER_PORT;
   }
 
   public start() {

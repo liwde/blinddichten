@@ -8,9 +8,15 @@ const errorList = {
   'gameNotFound': {
     text: 'Das angegebene Spiel wurde nicht gefunden.'
   },
+  'cantEnterGame': {
+    text: 'Du kannst dem Spiel nicht mehr beitreten.'
+  },
   'wrongGamePhase': {
     text: 'Du bist in der falschen Spielphase für diese Aktion.',
     recoverable: true,
+  },
+  'notInGame': {
+    text: 'Du bist nicht Teil dieses Spiels.'
   },
   'nothingEntered': {
     text: 'Du solltest vielleicht etwas eingeben…',
