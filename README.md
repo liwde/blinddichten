@@ -32,7 +32,6 @@ This project is hot off the press, the main building blocks developed in under a
 
 - **Add a real persistence in the backend.** MySQL should be supported to store the poems for a bit longer. Also, there should be put some more thought into regular cleanup of such database, especially for aborted rounds that were never finished.
 - **Add non-essential features.** I'll list the ones I already have in mind:
-  - a static page to view and print all poems
   - a "start new game" button on the Viewing screen -- one players clicks it, all players get a notification to join the new game
   - ~~a history of previous games at the Home screen, directly taking you to the static page with all the poems to enjoy them later, from the game ids stored in the browser's `localStorage`~~
 - **Fix bugs.** I'll list some known ones:
