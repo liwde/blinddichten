@@ -12,7 +12,9 @@ const wsHandler = new WebSocketHandler(`${host}/ws`);
 const app = new App({
   target: document.body,
   props: {
-    wsHandler
+    wsHandler,
+    matomoUrl: 'https://stats.liwde.de/',
+    matomoSiteId: '3'
   }
 });
 

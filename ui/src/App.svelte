@@ -1,7 +1,10 @@
 <script>
   export let wsHandler;
+  export let matomoUrl;
+  export let matomoSiteId;
 
   import Game from './Game.svelte';
+  import Matomo from './controls/Matomo.svelte';
   import Home from './screens/Home.svelte';
   import { onDestroy } from 'svelte';
   import { fly, fade } from 'svelte/transition';
@@ -108,16 +111,19 @@
 </nav>
 
 <app>
-  {#if errors && errors.length > 0}
-    <errors>
-      {#each errors as error (error.id)}
-        <div class="alert alert-danger dismissible" in:fly="{{y: -500}}" out:fade>
-          {error.text}
-          <label class="btn-close" on:click="{() => dismissError(error.id)}">X</label>
-        </div>
-      {/each}
-    </errors>
-  {/if}
+  <messages>
+    <Matomo matomoUrl="{matomoUrl}" matomoSiteId="{matomoSiteId}" />
+    {#if errors && errors.length > 0}
+      <errors>
+        {#each errors as error (error.id)}
+          <div class="alert alert-danger dismissible" in:fly="{{y: -500}}" out:fade>
+            {error.text}
+            <label class="btn-close" on:click="{() => dismissError(error.id)}">X</label>
+          </div>
+        {/each}
+      </errors>
+    {/if}
+  </messages>
   {#if gameId}
     <Game wsHandler="{wsHandler}" gameId="{gameId}" publicPlayerId="{publicPlayerId}" bind:gamePhase on:errorOccurred="{errorOccurred}" />
   {:else}
@@ -130,10 +136,10 @@
     display: block;
     padding: 1em;
   }
-  errors {
+  messages {
     display: block;
-    margin: 4em auto 0 auto;
-    max-width: 600px;
+    margin: 4em auto -1em auto;
+    max-width: 800px;
   }
   nav .nav-brand h3 a img {
     vertical-align: middle;
