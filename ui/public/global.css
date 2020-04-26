@@ -50,3 +50,7 @@ nav .nav-brand h3 a:hover {
        url('fonts/patrick-hand-sc-v7-latin_latin-ext-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
        url('fonts/patrick-hand-sc-v7-latin_latin-ext-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
+
+#darkmode-toggle {
+  fill: #7aa667;
+}

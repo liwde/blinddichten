@@ -1,0 +1,23 @@
+
+body, nav {
+  color: rgb(255, 253, 248);
+  background: rgb(19, 19, 20);
+}
+
+a, .collapsible label, .svelte-gwqplq {
+  color: rgb(255, 253, 248);
+}
+
+nav .collapsible button, button {
+  color: rgb(255, 253, 248);
+  background:  rgb(19, 19, 20);
+}
+
+a a:visited {
+  color: rgb(255, 253, 248);
+  background-image: none;
+}
+
+.progress, button.btn-primary {
+  color: rgb(19, 19, 20);
+}
