@@ -27,9 +27,11 @@ function setTheme(mode) {
         darkTheme.disabled = true;
     }
 }
+
+import { createEventDispatcher } from 'svelte';
+const dispatch = createEventDispatcher();
 </script>
 
-<button on:click="{switchTheme()}">
-{#if stored == "dark"}light
-{:else}dark{/if}
+<button on:click="{() => dispatch(switchTheme)}">
+<img src="img/icon_darkmode.svg" alt="dark mode toggle" class="no-responsive no-border"/>
 </button>

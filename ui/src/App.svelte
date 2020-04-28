@@ -10,6 +10,7 @@
   import { fly, fade } from 'svelte/transition';
   import errorList from './util/errorList';
   import { removeGame } from './util/lastGames';
+  import toggleDarkModeButton from './controls/toggleDarkModeButton.svelte';
 
   let gameId, privatePlayerId, publicPlayerId, gamePhase;
   let waitingForGameCreation = false;
@@ -105,48 +106,11 @@
       <ul class="inline">
         <li><a href="https://blog.liwde.de" target="_blank">liwde</a></li>
         <li><a href="https://www.github.com/liwde/blinddichten" target="_blank">GitHub</a></li>
-        <li><button id="dark-mode-toggle">
-          <img src="img/icon_darkmode.svg" alt="dark mode toggle" class="no-responsive no-border"/>
-        </button></li>
-        <script>
-            // darkmode button
-            var toggle = document.getElementById("dark-mode-toggle");
-            var darkTheme = document.getElementById("dark-mode-css");
-            var stored = localStorage.getItem("dark-mode-storage")
-
-            if (stored) {
-              setTheme(stored)
-            } else {
-              if (window.matchMedia("(prefers-color-scheme: dark)").matches ) {
-              localStorage.setItem("dark-mode-storage", "dark");
-              }
-            }
-            
-            toggle.addEventListener("click", switchTheme);
-
-            function switchTheme() {
-                console.log("dark mode clicked")
-                if (darkTheme.disabled) {
-                    setTheme("dark");
-                } else {
-                    setTheme("light");
-                  }
-            }
-
-            function setTheme(mode) {
-              localStorage.setItem("dark-mode-storage", mode);
-                if (mode === "dark") {
-                    darkTheme.disabled = false;
-                } else if (mode === "light") {
-                    darkTheme.disabled = true;
-                }
-            }
-        </script>
+        <li><toggleDarkModeButton/></li>
       </ul>
     </div>
   </div>
 </nav>
-
 <app>
   <messages>
     <Matomo matomoUrl="{matomoUrl}" matomoSiteId="{matomoSiteId}" />
