@@ -106,43 +106,43 @@
         <li><a href="https://blog.liwde.de" target="_blank">liwde</a></li>
         <li><a href="https://www.github.com/liwde/blinddichten" target="_blank">GitHub</a></li>
         <li><button id="dark-mode-toggle">
-        <svg aria-hidden="true" class="svg-icon" width="24" height="24"><path id="darkmode-toggle" d="M18.925 4.075c4.1 4.1 4.1 10.75 0 14.85s-10.75 4.1-14.85 0-4.1-10.75 0-14.85 10.75-4.1 14.85 0zM17.51 17.51a8.5 8.5 0 000-12.02L5.49 17.51a8.5 8.5 0 0012.02 0z"></path></svg>
+          <img src="img/icon_darkmode.svg" alt="dark mode toggle" class="no-responsive no-border"/>
         </button></li>
-      </ul>
-      <script>
-        var toggle = document.getElementById("dark-mode-toggle");
-        var darkTheme = document.getElementById("dark-mode-css");
+        <script>
+            // darkmode button
+            var toggle = document.getElementById("dark-mode-toggle");
+            var darkTheme = document.getElementById("dark-mode-css");
+            var stored = localStorage.getItem("dark-mode-storage")
 
-        var stored = localStorage.getItem("dark-mode-storage")
-
-        if (stored) {
-          setTheme(stored)
-        } else {
-          if (window.matchMedia("(prefers-color-scheme: dark)").matches ) {
-          localStorage.setItem("dark-mode-storage", "dark");
-          }
-        }
-        
-        toggle.addEventListener("click", switchTheme);
-
-        function switchTheme() {
-            console.log("dark mode clicked")
-            if (darkTheme.disabled) {
-                setTheme("dark");
+            if (stored) {
+              setTheme(stored)
             } else {
-                setTheme("light");
+              if (window.matchMedia("(prefers-color-scheme: dark)").matches ) {
+              localStorage.setItem("dark-mode-storage", "dark");
               }
-        }
-
-        function setTheme(mode) {
-          localStorage.setItem("dark-mode-storage", mode);
-            if (mode === "dark") {
-                darkTheme.disabled = false;
-            } else if (mode === "light") {
-                darkTheme.disabled = true;
             }
-        }
-      </script>
+            
+            toggle.addEventListener("click", switchTheme);
+
+            function switchTheme() {
+                console.log("dark mode clicked")
+                if (darkTheme.disabled) {
+                    setTheme("dark");
+                } else {
+                    setTheme("light");
+                  }
+            }
+
+            function setTheme(mode) {
+              localStorage.setItem("dark-mode-storage", mode);
+                if (mode === "dark") {
+                    darkTheme.disabled = false;
+                } else if (mode === "light") {
+                    darkTheme.disabled = true;
+                }
+            }
+        </script>
+      </ul>
     </div>
   </div>
 </nav>
