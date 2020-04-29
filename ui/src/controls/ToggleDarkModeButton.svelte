@@ -20,10 +20,10 @@ function switchTheme() {
         stored = "dark";
     } else {
         stored = "light";
-      }
+    }
 }
 </script>
 
-<button on:click="{switchTheme}">
+<span on:click="{switchTheme}" role="button">
 <img src="img/icon_darkmode.svg" alt="dark mode toggle" class="no-responsive no-border"/>
-</button>
+</span>
