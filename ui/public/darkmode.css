@@ -4,7 +4,7 @@ body, nav {
   background: rgb(19, 19, 20);
 }
 
-a, .collapsible label, .svelte-gwqplq {
+a, .collapsible label{
   color: rgb(255, 253, 248);
 }
 
