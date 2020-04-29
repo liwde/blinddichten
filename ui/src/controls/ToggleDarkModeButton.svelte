@@ -1,5 +1,5 @@
 <svelte:head>
-{#if stored == "dark"}
+{#if stored === "dark"}
 <link rel='stylesheet' href='darkmode.css' id="dark-mode-css">
 {/if}
 </svelte:head>
