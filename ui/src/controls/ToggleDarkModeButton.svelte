@@ -1,25 +1,26 @@
 <script>
-  let stored = localStorage.getItem("dark-mode-storage");
+  let theme = localStorage.getItem("theme");
 
-  if (!stored) {
+  if (!theme) {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches ) {
-      stored = "dark";
+      theme = "dark";
     } else {
-      stored = "light";
+      theme = "light";
     }
   }
 
   function switchTheme() {
-    if (stored === "light") {
-      stored = "dark";
+    if (theme === "light") {
+      theme = "dark";
     } else {
-      stored = "light";
+      theme = "light";
     }
+    localStorage.setItem("theme", theme);
   }
 </script>
 
 <svelte:head>
-  {#if stored === "dark"}
+  {#if theme === "dark"}
     <link rel='stylesheet' href='darkmode.css' id="dark-mode-css">
   {/if}
 </svelte:head>
