@@ -8,7 +8,7 @@ a, .collapsible label{
   color: rgb(255, 253, 248);
 }
 
-nav .collapsible button, button {
+button {
   color: rgb(255, 253, 248);
   background: rgb(19, 19, 20);
 }
