@@ -5,8 +5,6 @@
 </svelte:head>
 
 <script>
-import { createEventDispatcher } from 'svelte';
-const dispatch = createEventDispatcher();
 var stored = localStorage.getItem("dark-mode-storage");
 
 if (!stored) {
