@@ -10,7 +10,7 @@
   import { fly, fade } from 'svelte/transition';
   import errorList from './util/errorList';
   import { removeGame } from './util/lastGames';
-  import toggleDarkModeButton from './controls/toggleDarkModeButton.svelte';
+  import ToggleDarkModeButton from './controls/ToggleDarkModeButton.svelte';
 
   let gameId, privatePlayerId, publicPlayerId, gamePhase;
   let waitingForGameCreation = false;
@@ -106,7 +106,7 @@
       <ul class="inline">
         <li><a href="https://blog.liwde.de" target="_blank">liwde</a></li>
         <li><a href="https://www.github.com/liwde/blinddichten" target="_blank">GitHub</a></li>
-        <li><toggleDarkModeButton/></li>
+        <li><ToggleDarkModeButton/></li>
       </ul>
     </div>
   </div>
