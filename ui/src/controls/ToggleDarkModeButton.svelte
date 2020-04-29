@@ -5,7 +5,7 @@
 </svelte:head>
 
 <script>
-var stored = localStorage.getItem("dark-mode-storage");
+let stored = localStorage.getItem("dark-mode-storage");
 
 if (!stored) {
   if (window.matchMedia("(prefers-color-scheme: dark)").matches ) {
@@ -27,4 +27,3 @@ function switchTheme() {
 <button on:click="{switchTheme}">
 <img src="img/icon_darkmode.svg" alt="dark mode toggle" class="no-responsive no-border"/>
 </button>
-
