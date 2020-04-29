@@ -16,7 +16,7 @@ if (!stored) {
 }
 
 function switchTheme() {
-    if (stored == "light") {
+    if (stored === "light") {
         stored = "dark";
     } else {
         stored = "light";
