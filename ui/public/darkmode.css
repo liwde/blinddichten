@@ -1,23 +1,36 @@
-
-body, nav {
-  color: rgb(255, 253, 248);
-  background: rgb(19, 19, 20);
+:root {
+  --main-bright-color: #b8b8b8;
+  --main-dark-color:  #111316;
 }
 
-a, .collapsible label{
-  color: rgb(255, 253, 248);
+body, nav {
+  color: var(--main-bright-color);
+  background: var(--main-dark-color);
+}
+
+nav .collapsible > button  {
+  color: var(--main-bright-color);
+  background: var(--main-dark-color);
 }
 
 button {
-  color: rgb(255, 253, 248);
-  background: rgb(19, 19, 20);
+  color: var(--main-bright-color);
+  background: var(--main-dark-color);
 }
 
 a a:visited {
-  color: rgb(255, 253, 248);
+  color: var(--main-bright-color);
   background-image: none;
 }
 
-.progress, button.btn-primary {
-  color: rgb(19, 19, 20);
+.progress, button.btn-primary, .badge {
+  color: var(--main-dark-color);
+}
+
+.progress .bar.success {
+  background-color: #85a061;
+}
+
+.progress .bar.secondary {
+  background-color: #91a0ad;
 }
