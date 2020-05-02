@@ -35,7 +35,7 @@
   <div class="card-body">
     {#if chunk === 0}
       <h3 class="card-title">
-        {#if !isLocked}<img class="inputAction" src="img/random.svg" alt="Zufälligen Titel generieren" title="Zufälligen Titel generieren" on:click="{makeRandomTitle}" />{/if}
+        {#if !isLocked}<img class="inputAction" src="img/random.svg" alt="Zufälligen Titel generieren" title="Zufälligen Titel generieren" on:click="{makeRandomTitle}" id="randomButton"/>{/if}
         <LockableInput isLocked="{isLocked}" bind:value="{verseOne}" placeholder="Titel" />
       </h3>
       <ol start="1">

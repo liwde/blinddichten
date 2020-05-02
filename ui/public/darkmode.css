@@ -1,0 +1,115 @@
+:root {
+  --main-bright-color: #b8b8b8;
+  --main-dark-color:  #111316;
+  --soft-shadow-color: rgba(128, 202, 96, 0.3); /*  rgba(255, 255, 255, 0.2); */
+  --hard-shadow-color: rgba(122, 166, 103, 0.4); /*  rgba(255, 255, 255, 0.3); */
+}
+
+input, select, textarea {
+  color: var(--main-bright-color);
+}
+
+body, nav, nav .collapsible > button  {
+  color: var(--main-bright-color);
+  background: var(--main-dark-color);
+}
+
+button {
+  color: var(--main-bright-color);
+  background: var(--main-dark-color);
+}
+
+a a:visited {
+  color: var(--main-bright-color);
+  background-image: none;
+}
+
+.progress, button.btn-primary, .badge {
+  color: var(--main-dark-color);
+}
+
+.progress .bar.success {
+  background-color: #85a061;
+}
+
+.progress .bar.secondary {
+  background-color: #91a0ad;
+}
+
+#randomButton {
+  filter: invert() brightness(0.8);
+  -webkit-filter: invert() brightness(0.8);
+}
+
+.paper {
+  box-shadow: -1px 5px 35px -9px var(--soft-shadow-color);
+}
+.shadow {
+  transition: all 235ms ease 0s;
+}
+.shadow.shadow-large {
+  box-shadow: 20px 38px 34px -26px var(--soft-shadow-color);
+}
+.shadow.shadow-small {
+  box-shadow: 10px 19px 17px -13px var(--soft-shadow-color);
+}
+.shadow.shadow-hover:hover {
+  /* box-shadow: 2px 8px 8px -5px var(--hard-shadow-color); */
+  box-shadow: 0px 0px 5px 5px var(--hard-shadow-color);
+}
+}
+.child-shadows > * {
+  box-shadow: 15px 28px 25px -18px var(--soft-shadow-color);
+}
+.child-shadows-hover > * {
+  /* box-shadow: 15px 28px 25px -18px var(--soft-shadow-color); */
+  box-shadow: 0px 0px 5px 5px var(--hard-shadow-color);
+}
+.child-shadows-hover > :hover {
+  /* box-shadow: 2px 8px 8px -5px var(--hard-shadow-color); */
+  box-shadow: 0px 0px 5px 5px var(--hard-shadow-color);
+}
+.paper-btn,
+[type=button],
+button {
+  box-shadow: 15px 28px 25px -18px var(--soft-shadow-color);
+  background: 0 0;
+  border: 2px solid #3f3e3c;
+  color: var(--main-bright-color);
+}
+.paper-btn.btn-large,
+[type=button].btn-large,
+button.btn-large {
+  box-shadow: 20px 38px 34px -26px var(--soft-shadow-color);
+}
+.paper-btn.btn-small,
+[type=button].btn-small,
+button.btn-small {
+  box-shadow: 10px 19px 17px -13px var(--soft-shadow-color);
+}
+.paper-btn:hover,
+[type=button]:hover,
+button:hover {
+  /* box-shadow: 2px 8px 8px -5px var(--hard-shadow-color); */
+  box-shadow: 0px 0px 5px 5px var(--hard-shadow-color);
+}
+.paper-btn:focus,
+[type=button]:focus,
+button:focus {
+  border: 2px solid #0071de;
+  /* box-shadow: 2px 8px 4px -6px var(--hard-shadow-color); */
+  box-shadow: 0px 0px 5px 5px var(--hard-shadow-color);
+}
+.card {
+  box-shadow: 15px 28px 25px -18px var(--soft-shadow-color);
+  border: 2px solid var(--main-bright-color);
+}
+.card:hover {
+  /* box-shadow: 2px 8px 8px -5px var(--hard-shadow-color); */
+  box-shadow: 0px 0px 5px 5px var(--hard-shadow-color);
+}
+.progress {
+  border: 2px solid #41403e;
+  /* box-shadow: 2px 8px 8px -5px var(--hard-shadow-color); */
+  box-shadow: 0px 0px 5px 5px var(--hard-shadow-color);
+}
