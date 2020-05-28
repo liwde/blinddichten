@@ -7,8 +7,10 @@ class Queue {
   private queueTail: Promise<any> = Promise.resolve();
   executeQueued<T>(fn: Task<T>): Promise<T> {
     const awaitUpToNow = this.queueTail;
-    this.queueTail = awaitUpToNow.then(fn);
-    return this.queueTail;
+    const executionResult = awaitUpToNow.then(fn); // execute fn after the queue
+    // tslint:disable-next-line: no-empty
+    this.queueTail = executionResult.catch(() => {}); // new queue: execution result + catch errors
+    return executionResult; // return execution result, errors uncaught
   }
 }
 
