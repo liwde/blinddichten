@@ -3,6 +3,8 @@
   --main-dark-color:  #111316;
   --soft-shadow-color: rgba(128, 202, 96, 0.3); /*  rgba(255, 255, 255, 0.2); */
   --hard-shadow-color: rgba(122, 166, 103, 0.4); /*  rgba(255, 255, 255, 0.3); */
+  --secondary-background-color: #0071de;
+  --danger-background-color: #a7342d;
 }
 
 input, select, textarea {
@@ -112,4 +114,14 @@ button:focus {
   border: 2px solid #41403e;
   /* box-shadow: 2px 8px 8px -5px var(--hard-shadow-color); */
   box-shadow: 0px 0px 5px 5px var(--hard-shadow-color);
+}
+
+.alert-secondary {
+  background-color: var(--secondary-background-color);
+  color: var(--main-bright-color);
+}
+
+.alert-danger {
+  background-color: var(--danger-background-color);
+  color: var(--main-bright-color);
 }
