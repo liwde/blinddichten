@@ -34,6 +34,6 @@ export function finishGame(gameId) {
 
 export function removeGame(gameId) {
   const games = getLastGames();
-  games.splice(games.find(g => g.gameId === gameId), 1);
+  games.splice(games.findIndex(g => g.gameId === gameId), 1);
   window.localStorage.setItem(KEY, JSON.stringify(games));
 }
